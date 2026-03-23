@@ -1,0 +1,13 @@
+@import './shared.css';
+
+.leads-table { background: #111; border: 1px solid #1a1a1a; border-radius: 12px; overflow: hidden; }
+.table-header, .table-row { display: grid; grid-template-columns: 1.5fr 1.2fr 1.5fr 0.8fr 0.7fr 0.8fr; gap: 0; padding: 12px 16px; align-items: center; }
+.table-header { font-size: 11px; color: #444; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1a1a1a; }
+.table-row { border-bottom: 1px solid #141414; font-size: 13.5px; transition: background 0.1s; }
+.table-row:last-child { border-bottom: none; }
+.table-row:hover { background: #141414; }
+.lead-name { color: #e0e0e0; font-weight: 500; }
+.lead-company, .lead-email { color: #777; }
+.lead-source { color: #555; font-size: 12px; }
+.status-select { background: transparent; border: none; font-size: 13px; font-weight: 500; cursor: pointer; outline: none; font-family: inherit; padding: 0; text-transform: capitalize; }
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; }

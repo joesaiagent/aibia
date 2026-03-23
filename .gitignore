@@ -5,6 +5,8 @@ __pycache__/
 backend/.venv/
 *.egg-info/
 .env
+*.db
+*.sqlite
 
 # Node
 node_modules/

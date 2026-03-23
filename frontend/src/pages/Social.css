@@ -1,0 +1,18 @@
+@import './shared.css';
+
+.platform-tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+.platform-tab { background: transparent; border: 1px solid #1f1f1f; border-radius: 8px; color: #555; font-size: 12.5px; padding: 7px 14px; cursor: pointer; font-family: inherit; transition: all 0.15s; text-transform: capitalize; }
+.platform-tab:hover { color: #aaa; border-color: #333; }
+.platform-tab.active { background: #1a1a1a; color: #fff; border-color: #333; }
+
+.posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+.post-card { background: #111; border: 1px solid #1a1a1a; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.post-card-header { display: flex; justify-content: space-between; align-items: center; }
+.post-platform { font-size: 13px; color: #888; text-transform: capitalize; }
+.post-status { font-size: 11.5px; font-weight: 600; text-transform: replace; }
+.post-content { font-size: 14px; color: #ccc; line-height: 1.6; flex: 1; }
+.post-hashtags { display: flex; flex-wrap: wrap; gap: 5px; }
+.hashtag { font-size: 11.5px; color: #7c6ff7; background: rgba(124,111,247,0.1); padding: 2px 8px; border-radius: 20px; }
+.post-footer { display: flex; justify-content: space-between; align-items: center; }
+.post-date { font-size: 11.5px; color: #444; }

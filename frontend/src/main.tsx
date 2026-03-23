@@ -1,10 +1,41 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'
-import App from './App.tsx'
+import App from './App'
+import Dashboard from './pages/Dashboard'
+import Chat from './pages/Chat'
+import AgentRun from './pages/AgentRun'
+import Leads from './pages/Leads'
+import Inbox from './pages/Inbox'
+import Social from './pages/Social'
+import Approvals from './pages/Approvals'
+import Settings from './pages/Settings'
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      { index: true, element: <Dashboard /> },
+      { path: 'chat', element: <Chat /> },
+      { path: 'agent', element: <AgentRun /> },
+      { path: 'leads', element: <Leads /> },
+      { path: 'inbox', element: <Inbox /> },
+      { path: 'social', element: <Social /> },
+      { path: 'approvals', element: <Approvals /> },
+      { path: 'settings', element: <Settings /> },
+    ],
+  },
+])
+
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } })
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </StrictMode>,
 )

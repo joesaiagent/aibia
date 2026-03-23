@@ -1,0 +1,35 @@
+@import './shared.css';
+
+.settings-page { max-width: 720px; }
+
+.settings-banner { padding: 12px 16px; border-radius: 8px; font-size: 13.5px; margin-bottom: 20px; }
+.settings-banner.success { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); color: #4ade80; }
+.settings-banner.error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2); color: #f87171; }
+
+.settings-section { margin-bottom: 36px; }
+.settings-section h2 { font-size: 15px; font-weight: 600; color: #ddd; margin-bottom: 6px; }
+.section-desc { font-size: 13px; color: #555; margin-bottom: 18px; line-height: 1.6; }
+
+.connected-accounts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.account-row { display: flex; align-items: center; gap: 12px; background: #111; border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px 14px; }
+.account-provider { font-size: 13px; color: #888; min-width: 100px; }
+.account-email { flex: 1; font-size: 13.5px; color: #ccc; }
+
+.connect-buttons { display: flex; gap: 10px; margin-bottom: 14px; }
+.connect-btn { display: flex; align-items: center; gap: 8px; background: #111; border: 1px solid #1f1f1f; border-radius: 9px; color: #aaa; font-size: 13.5px; padding: 11px 18px; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+.connect-btn:hover { border-color: #7c6ff7; color: #fff; background: #141414; }
+
+.settings-note { font-size: 12px; color: #444; background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px 14px; line-height: 1.6; }
+.settings-note code { color: #7c6ff7; font-size: 12px; }
+
+.social-platforms { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.social-platform-row { display: flex; align-items: center; gap: 12px; background: #111; border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px 14px; }
+.platform-icon { font-size: 18px; }
+.platform-name { flex: 1; font-size: 13.5px; color: #888; }
+.platform-status { font-size: 11.5px; color: #444; margin-right: 8px; }
+
+.api-key-list { display: flex; flex-direction: column; gap: 8px; }
+.api-key-row { display: flex; align-items: center; gap: 12px; background: #111; border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px 14px; }
+.key-name { color: #7c6ff7; font-size: 12.5px; min-width: 180px; }
+.key-label { flex: 1; font-size: 13px; color: #888; }
+.key-required { font-size: 11px; color: #fb923c; background: rgba(251,146,60,0.1); padding: 2px 8px; border-radius: 20px; }

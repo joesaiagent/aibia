@@ -1,0 +1,65 @@
+.page { padding: 32px; max-width: 1100px; }
+.page-loading { padding: 40px; color: #555; }
+
+.page-header { margin-bottom: 28px; }
+.page-header h1 { font-size: 22px; font-weight: 600; color: #fff; letter-spacing: -0.4px; }
+.page-header p { font-size: 13px; color: #555; margin-top: 4px; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
+
+.stat-card {
+  background: #111;
+  border: 1px solid #1a1a1a;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stat-card.clickable { cursor: pointer; transition: border-color 0.15s; }
+.stat-card.clickable:hover { border-color: #7c6ff7; }
+
+.stat-icon { font-size: 22px; }
+.stat-value { font-size: 28px; font-weight: 700; color: #fff; line-height: 1; }
+.stat-label { font-size: 12px; color: #555; margin-top: 3px; }
+
+.stat-breakdown { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #1a1a1a;
+  color: #666;
+}
+.tag.new { background: rgba(124, 111, 247, 0.15); color: #a78bfa; }
+.tag.qualified { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
+.tag.won { background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
+.tag.pending { background: rgba(251, 146, 60, 0.1); color: #fb923c; }
+
+.stat-alert { font-size: 11px; color: #fb923c; font-weight: 500; }
+.stat-alert.muted { color: #444; }
+
+.quick-actions h2 { font-size: 15px; font-weight: 600; color: #888; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; }
+
+.action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+.action-card {
+  background: #111;
+  border: 1px solid #1a1a1a;
+  border-radius: 12px;
+  padding: 18px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.action-card:hover { border-color: #7c6ff7; background: #141414; }
+
+.action-icon { font-size: 20px; }
+.action-label { font-size: 14px; font-weight: 600; color: #ddd; }
+.action-desc { font-size: 12px; color: #555; line-height: 1.4; }

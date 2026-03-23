@@ -1,0 +1,44 @@
+@import './shared.css';
+
+.approvals-list { display: flex; flex-direction: column; gap: 10px; }
+
+.approval-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #111;
+  border: 1px solid #1a1a1a;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.approval-card:hover { border-color: #252525; }
+.approval-card.pending { border-left: 3px solid #fbbf24; }
+.approval-card.approved { border-left: 3px solid #4ade80; opacity: 0.7; }
+.approval-card.rejected { border-left: 3px solid #f87171; opacity: 0.7; }
+
+.approval-type-icon { font-size: 22px; flex-shrink: 0; }
+.approval-body { flex: 1; min-width: 0; }
+.approval-title { font-size: 14px; color: #ddd; font-weight: 500; margin-bottom: 4px; }
+.approval-desc { font-size: 12.5px; color: #555; margin-bottom: 8px; }
+.approval-meta { display: flex; gap: 10px; align-items: center; }
+
+.status-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; text-transform: capitalize; }
+.status-badge.pending { background: rgba(251,191,36,0.1); color: #fbbf24; }
+.status-badge.approved { background: rgba(74,222,128,0.1); color: #4ade80; }
+.status-badge.rejected { background: rgba(248,113,113,0.1); color: #f87171; }
+
+.approval-time { font-size: 11.5px; color: #444; }
+.approval-quick-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.btn-approve { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); border-radius: 7px; color: #4ade80; font-size: 12.5px; padding: 6px 14px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.btn-approve:hover { background: rgba(74,222,128,0.2); }
+.btn-reject { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2); border-radius: 7px; color: #f87171; font-size: 12.5px; padding: 6px 14px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.btn-reject:hover { background: rgba(248,113,113,0.2); }
+
+.btn-approve-full { background: #4ade80; border: none; border-radius: 8px; color: #000; font-size: 13.5px; font-weight: 600; padding: 9px 18px; cursor: pointer; font-family: inherit; }
+.btn-reject-full { background: transparent; border: 1px solid rgba(248,113,113,0.4); border-radius: 8px; color: #f87171; font-size: 13.5px; padding: 9px 18px; cursor: pointer; font-family: inherit; }
+
+.payload-view { background: #0d0d0d; border: 1px solid #1f1f1f; border-radius: 8px; padding: 14px; margin-bottom: 16px; overflow-x: auto; }
+.payload-view pre { font-size: 12.5px; color: #888; white-space: pre-wrap; margin: 0; }
