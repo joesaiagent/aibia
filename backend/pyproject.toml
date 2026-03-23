@@ -1,0 +1,19 @@
+[project]
+name = "aibia-backend"
+version = "0.1.0"
+description = "AI agent for small businesses"
+authors = [
+    {name = "joesaiagent",email = "joesaiagent@gmail.com"}
+]
+requires-python = "^3.14"
+dependencies = [
+    "anthropic (>=0.86.0,<0.87.0)",
+    "fastapi (>=0.135.1,<0.136.0)",
+    "uvicorn (>=0.42.0,<0.43.0)",
+    "python-dotenv (>=1.2.2,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
