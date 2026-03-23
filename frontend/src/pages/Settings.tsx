@@ -55,8 +55,26 @@ export default function Settings() {
 
       {/* Email */}
       <section className="settings-section">
-        <h2>📧 Email Accounts</h2>
-        <p className="section-desc">Connect your email to let aibia read your inbox and send outreach emails with your approval.</p>
+        <h2>📧 Email Sending</h2>
+        <p className="section-desc">Connect your email so aibia can send approved outreach emails on your behalf.</p>
+
+        <div className="settings-note" style={{ marginBottom: 16 }}>
+          <strong style={{ color: '#ddd' }}>Quickest setup — Gmail App Password (SMTP)</strong><br />
+          <ol style={{ margin: '10px 0 0 16px', lineHeight: 2 }}>
+            <li>Go to <a href="https://myaccount.google.com/security" target="_blank" rel="noreferrer" style={{ color: '#7c6ff7' }}>myaccount.google.com/security</a> and enable 2-Step Verification</li>
+            <li>Go to <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noreferrer" style={{ color: '#7c6ff7' }}>myaccount.google.com/apppasswords</a> → create a password for "aibia"</li>
+            <li>Add to <code>backend/.env</code>:
+              <pre style={{ background: '#0d0d0d', padding: '10px', borderRadius: 6, marginTop: 6, fontSize: 12, color: '#a78bfa' }}>
+{`SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your@gmail.com
+SMTP_PASSWORD=xxxx-xxxx-xxxx-xxxx
+SMTP_FROM_NAME=Your Name`}
+              </pre>
+            </li>
+            <li>Restart the backend server</li>
+          </ol>
+        </div>
 
         <div className="connected-accounts">
           {accounts.map((acc: EmailAccount) => (
@@ -68,19 +86,22 @@ export default function Settings() {
           ))}
         </div>
 
-        <div className="connect-buttons">
-          <button className="connect-btn gmail" onClick={() => connectEmail('gmail')}>
-            <span>📧</span> Connect Gmail
-          </button>
-          <button className="connect-btn outlook" onClick={() => connectEmail('outlook')}>
-            <span>📬</span> Connect Outlook
-          </button>
-        </div>
-
-        <div className="settings-note">
-          To connect Gmail or Outlook, add your OAuth credentials to <code>backend/.env</code>.
-          See <code>backend/.env.example</code> for instructions.
-        </div>
+        <details style={{ marginTop: 12 }}>
+          <summary style={{ cursor: 'pointer', fontSize: 13, color: '#555' }}>Advanced: Connect via OAuth (Gmail / Outlook)</summary>
+          <div style={{ marginTop: 12 }}>
+            <div className="connect-buttons">
+              <button className="connect-btn gmail" onClick={() => connectEmail('gmail')}>
+                <span>📧</span> Connect Gmail OAuth
+              </button>
+              <button className="connect-btn outlook" onClick={() => connectEmail('outlook')}>
+                <span>📬</span> Connect Outlook OAuth
+              </button>
+            </div>
+            <div className="settings-note">
+              Requires a Google Cloud project with Gmail API enabled. See <code>backend/.env.example</code> for setup.
+            </div>
+          </div>
+        </details>
       </section>
 
       {/* Social */}

@@ -100,13 +100,34 @@ def reject(approval_id: str, data: ReviewRequest, db: Session = Depends(get_db))
 
 
 def _execute_email_send(payload: dict, db: Session) -> dict:
+    from app.config import settings
+
+    # Try SMTP first (simpler, works with Gmail app password)
+    if settings.smtp_host and settings.smtp_user and settings.smtp_password:
+        try:
+            from app.services.smtp import send_email_smtp
+            return send_email_smtp(
+                to=payload["to"],
+                subject=payload["subject"],
+                body=payload["body"],
+            )
+        except Exception as e:
+            return {"error": f"SMTP send failed: {e}"}
+
+    # Fall back to OAuth account
     from app.models.email_account import EmailAccount
+    # Try to find the specific account, otherwise use any active one
     account = db.query(EmailAccount).filter(
         EmailAccount.email_address == payload.get("from_account"),
         EmailAccount.is_active == True,
     ).first()
     if not account:
-        return {"error": "Email account not connected. Go to Settings to connect your email."}
+        account = db.query(EmailAccount).filter(EmailAccount.is_active == True).first()
+    if not account:
+        return {
+            "error": "No email configured. Add SMTP_HOST, SMTP_USER, and SMTP_PASSWORD to backend/.env, "
+                     "or connect Gmail/Outlook in Settings."
+        }
 
     try:
         if account.provider == "gmail":
@@ -127,7 +148,7 @@ def _execute_email_send(payload: dict, db: Session) -> dict:
                 body=payload["body"],
                 db=db,
             )
-        return {"sent": True, "to": payload["to"]}
+        return {"sent": True, "to": payload["to"], "via": account.provider}
     except Exception as e:
         return {"error": str(e)}
 

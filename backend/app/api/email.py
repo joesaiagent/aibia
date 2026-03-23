@@ -115,9 +115,11 @@ def oauth_callback(code: str, state: str, provider: str = None, db: Session = De
         else:
             raise HTTPException(status_code=400, detail="Unknown provider")
     except Exception as e:
-        return RedirectResponse(url=f"http://localhost:5173/settings?error={str(e)}")
+        from app.config import settings as cfg
+        return RedirectResponse(url=f"{cfg.frontend_url}/settings?error={str(e)}")
 
-    return RedirectResponse(url=f"http://localhost:5173/settings?connected={prov}&email={account.email_address}")
+    from app.config import settings as cfg
+    return RedirectResponse(url=f"{cfg.frontend_url}/settings?connected={prov}&email={account.email_address}")
 
 
 def _handle_gmail_callback(code: str, db: Session) -> EmailAccount:

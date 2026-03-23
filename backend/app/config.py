@@ -27,6 +27,16 @@ class Settings(BaseSettings):
     facebook_app_id: str = ""
     facebook_app_secret: str = ""
 
+    # SMTP (simpler alternative to OAuth — use Gmail app password)
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from_name: str = "aibia"
+
+    # Frontend URL for OAuth redirects
+    frontend_url: str = "http://localhost:5174"
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 
