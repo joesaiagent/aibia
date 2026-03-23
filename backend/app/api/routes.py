@@ -1,6 +1,8 @@
+import json
 from fastapi import APIRouter
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from app.agent.agent import run_agent
+from app.agent.agent import stream_agent
 
 router = APIRouter()
 
@@ -10,15 +12,13 @@ class ChatRequest(BaseModel):
     conversation_id: str | None = None
 
 
-class ChatResponse(BaseModel):
-    response: str
-    conversation_id: str
-
-
-@router.post("/chat", response_model=ChatResponse)
+@router.post("/chat")
 async def chat(request: ChatRequest):
-    response, conversation_id = await run_agent(request.message, request.conversation_id)
-    return ChatResponse(response=response, conversation_id=conversation_id)
+    async def event_stream():
+        async for chunk in stream_agent(request.message, request.conversation_id):
+            yield f"data: {json.dumps(chunk)}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
 @router.get("/health")

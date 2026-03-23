@@ -351,7 +351,59 @@ body {
   border-radius: 14px;
   font-size: 14.5px;
   line-height: 1.65;
-  white-space: pre-wrap;
+}
+
+/* Markdown styles inside assistant bubbles */
+.message.assistant .msg-bubble p { margin: 0 0 10px; }
+.message.assistant .msg-bubble p:last-child { margin-bottom: 0; }
+.message.assistant .msg-bubble ul,
+.message.assistant .msg-bubble ol { padding-left: 20px; margin: 0 0 10px; }
+.message.assistant .msg-bubble li { margin-bottom: 4px; }
+.message.assistant .msg-bubble strong { color: #fff; font-weight: 600; }
+.message.assistant .msg-bubble h1,
+.message.assistant .msg-bubble h2,
+.message.assistant .msg-bubble h3 {
+  color: #fff;
+  font-weight: 600;
+  margin: 12px 0 6px;
+  letter-spacing: -0.3px;
+}
+.message.assistant .msg-bubble h1 { font-size: 16px; }
+.message.assistant .msg-bubble h2 { font-size: 15px; }
+.message.assistant .msg-bubble h3 { font-size: 14.5px; }
+.message.assistant .msg-bubble code {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #a78bfa;
+}
+.message.assistant .msg-bubble pre {
+  background: #0d0d0d;
+  border: 1px solid #1f1f1f;
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+.message.assistant .msg-bubble pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #ccc;
+}
+.message.assistant .msg-bubble blockquote {
+  border-left: 3px solid #7c6ff7;
+  padding-left: 12px;
+  color: #888;
+  margin: 8px 0;
+}
+.message.assistant .msg-bubble hr {
+  border: none;
+  border-top: 1px solid #1f1f1f;
+  margin: 10px 0;
 }
 
 .message.assistant .msg-bubble {

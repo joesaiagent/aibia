@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import './App.css'
 
 interface Message {
@@ -36,10 +37,7 @@ function App() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
 
-  const newChat = () => {
-    setActiveId(null)
-    setInput('')
-  }
+  const newChat = () => { setActiveId(null); setInput('') }
 
   const sendMessage = async (text = input) => {
     const trimmed = text.trim()
@@ -47,18 +45,18 @@ function App() {
 
     setInput('')
     if (textareaRef.current) textareaRef.current.style.height = 'auto'
+    setLoading(true)
 
     const userMsg: Message = { role: 'user', content: trimmed }
-
     let convId = activeId
+
     if (!convId) {
       convId = crypto.randomUUID()
-      const newConv: Conversation = {
-        id: convId,
+      setConversations(prev => [{
+        id: convId!,
         title: trimmed.slice(0, 40),
         messages: [userMsg],
-      }
-      setConversations(prev => [newConv, ...prev])
+      }, ...prev])
       setActiveId(convId)
     } else {
       setConversations(prev =>
@@ -66,7 +64,11 @@ function App() {
       )
     }
 
-    setLoading(true)
+    // Add empty assistant message to stream into
+    const assistantMsg: Message = { role: 'assistant', content: '' }
+    setConversations(prev =>
+      prev.map(c => c.id === convId ? { ...c, messages: [...c.messages, assistantMsg] } : c)
+    )
 
     try {
       const res = await fetch('http://localhost:8000/api/chat', {
@@ -74,14 +76,41 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: trimmed, conversation_id: convId }),
       })
-      const data = await res.json()
-      const assistantMsg: Message = { role: 'assistant', content: data.response }
-      setConversations(prev =>
-        prev.map(c => c.id === convId ? { ...c, messages: [...c.messages, assistantMsg] } : c)
-      )
+
+      const reader = res.body!.getReader()
+      const decoder = new TextDecoder()
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const lines = decoder.decode(value).split('\n')
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          const chunk = JSON.parse(line.slice(6))
+          if (chunk.type === 'delta') {
+            setConversations(prev =>
+              prev.map(c => {
+                if (c.id !== convId) return c
+                const msgs = [...c.messages]
+                msgs[msgs.length - 1] = {
+                  ...msgs[msgs.length - 1],
+                  content: msgs[msgs.length - 1].content + chunk.text,
+                }
+                return { ...c, messages: msgs }
+              })
+            )
+          }
+        }
+      }
     } catch {
       setConversations(prev =>
-        prev.map(c => c.id === convId ? { ...c, messages: [...c.messages, { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }] } : c)
+        prev.map(c => {
+          if (c.id !== convId) return c
+          const msgs = [...c.messages]
+          msgs[msgs.length - 1] = { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }
+          return { ...c, messages: msgs }
+        })
       )
     } finally {
       setLoading(false)
@@ -89,10 +118,7 @@ function App() {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
   }
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -105,7 +131,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="logo">
@@ -149,7 +174,6 @@ function App() {
         </div>
       </aside>
 
-      {/* Main */}
       <main className="main">
         <header className="main-header">
           <span className="main-title">{activeConversation?.title ?? 'New conversation'}</span>
@@ -178,16 +202,20 @@ function App() {
             <div className="messages">
               {messages.map((msg, i) => (
                 <div key={i} className={`message ${msg.role}`}>
-                  {msg.role === 'assistant' && (
-                    <div className="msg-avatar">✦</div>
-                  )}
+                  {msg.role === 'assistant' && <div className="msg-avatar">✦</div>}
                   <div className="msg-content">
                     {msg.role === 'assistant' && <div className="msg-sender">aibia</div>}
-                    <div className="msg-bubble">{msg.content}</div>
+                    <div className="msg-bubble">
+                      {msg.role === 'assistant' ? (
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      ) : (
+                        msg.content
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
-              {loading && (
+              {loading && messages[messages.length - 1]?.content === '' && (
                 <div className="message assistant">
                   <div className="msg-avatar">✦</div>
                   <div className="msg-content">
