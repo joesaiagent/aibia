@@ -41,10 +41,10 @@ export default function Sidebar() {
 
       <div className="sidebar-footer">
         <div className="user-info">
-          <div className="user-avatar">J</div>
+          <div className="user-avatar">✦</div>
           <div>
-            <div className="user-name">joesaiagent</div>
-            <div className="user-plan">aibia</div>
+            <div className="user-name">aibia</div>
+            <div className="user-plan">beta</div>
           </div>
         </div>
       </div>
