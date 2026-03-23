@@ -6,12 +6,12 @@ interface Message { role: 'user' | 'assistant'; content: string }
 interface Conversation { id: string; title: string; messages: Message[] }
 
 const SUGGESTIONS = [
-  { icon: '📈', label: 'Grow my business', prompt: 'What are the most effective ways to grow a small business?' },
-  { icon: '📣', label: 'Marketing help', prompt: 'Help me create a simple marketing plan for my small business.' },
-  { icon: '💰', label: 'Finance advice', prompt: 'What financial metrics should I track as a small business owner?' },
+  { icon: '📈', label: 'Grow my business', prompt: 'What are the most effective ways to grow a growing business?' },
+  { icon: '📣', label: 'Marketing help', prompt: 'Help me create a simple marketing plan for my growing business.' },
+  { icon: '💰', label: 'Finance advice', prompt: 'What financial metrics should I track as a growing business owner?' },
   { icon: '🤝', label: 'Customer service', prompt: 'How do I handle difficult customers professionally?' },
   { icon: '📦', label: 'Inventory tips', prompt: 'How should I manage inventory for a small retail business?' },
-  { icon: '⚙️', label: 'Operations', prompt: 'How can I streamline operations in my small business?' },
+  { icon: '⚙️', label: 'Operations', prompt: 'How can I streamline operations in my growing business?' },
 ]
 
 export default function ChatWindow() {

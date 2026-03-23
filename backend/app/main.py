@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="aibia", description="AI agent for small businesses", lifespan=lifespan)
+app = FastAPI(title="aibia", description="AI agent for growing businesses", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

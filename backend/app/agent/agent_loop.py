@@ -8,7 +8,7 @@ from app.agent.tools import ALL_TOOLS, TOOL_HANDLERS
 load_dotenv()
 client = anthropic.Anthropic()
 
-AGENT_SYSTEM_PROMPT = """You are aibia, an autonomous AI business agent for small businesses.
+AGENT_SYSTEM_PROMPT = """You are aibia, an autonomous AI business agent for growing businesses.
 
 You have access to real tools. Use them proactively to complete the user's task:
 - Search the web to find leads and research prospects

@@ -1,6 +1,6 @@
 # ✦ aibia — AI Business Intelligence Agent
 
-**aibia** is an open-source AI agent platform built for small businesses. It automates lead generation, email outreach, and social media marketing — all with a human-in-the-loop approval system so you stay in control.
+**aibia** is an open-source AI agent platform built for growing businesses. It automates lead generation, email outreach, and social media marketing — all with a human-in-the-loop approval system so you stay in control.
 
 ![aibia](https://img.shields.io/badge/powered%20by-Claude-7c6ff7?style=flat-square) ![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 

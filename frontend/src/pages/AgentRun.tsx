@@ -11,7 +11,7 @@ interface AgentStep {
 const TASK_SUGGESTIONS = [
   'Find 5 leads for a coffee shop in Austin, Texas and draft outreach emails for each',
   'Search for small restaurant owners in Miami and create a prospect list',
-  'Draft a LinkedIn post about the benefits of AI for small businesses',
+  'Draft a LinkedIn post about the benefits of AI for growing businesses',
   'Find potential leads for a hair salon and draft Instagram posts to attract new customers',
 ]
 

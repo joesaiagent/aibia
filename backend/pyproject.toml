@@ -1,7 +1,7 @@
 [project]
 name = "aibia-backend"
 version = "0.1.0"
-description = "AI agent for small businesses"
+description = "AI agent for growing businesses"
 authors = [
     {name = "joesaiagent",email = "joesaiagent@gmail.com"}
 ]
