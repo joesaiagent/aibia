@@ -2,9 +2,10 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
+import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-react'
 import './index.css'
 import App from './App'
+import Landing from './pages/Landing'
 import Dashboard from './pages/Dashboard'
 import Chat from './pages/Chat'
 import AgentRun from './pages/AgentRun'
@@ -42,7 +43,7 @@ function ProtectedApp() {
         <RouterProvider router={router} />
       </SignedIn>
       <SignedOut>
-        <RedirectToSignIn />
+        <Landing />
       </SignedOut>
     </>
   )
