@@ -54,29 +54,25 @@ def initiate_oauth(provider: str):
         if not settings.google_client_id:
             raise HTTPException(
                 status_code=503,
-                detail="Gmail not configured. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to backend/.env. Set up at https://console.cloud.google.com"
+                detail="Gmail not configured. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to backend/.env."
             )
-        from google_auth_oauthlib.flow import Flow
-        flow = Flow.from_client_config(
-            {
-                "web": {
-                    "client_id": settings.google_client_id,
-                    "client_secret": settings.google_client_secret,
-                    "redirect_uris": [settings.google_redirect_uri],
-                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                    "token_uri": "https://oauth2.googleapis.com/token",
-                }
-            },
-            scopes=[
+        import urllib.parse
+        params = {
+            "client_id": settings.google_client_id,
+            "redirect_uri": settings.google_redirect_uri,
+            "response_type": "code",
+            "scope": " ".join([
                 "https://www.googleapis.com/auth/gmail.readonly",
                 "https://www.googleapis.com/auth/gmail.compose",
                 "https://www.googleapis.com/auth/gmail.send",
                 "https://www.googleapis.com/auth/userinfo.email",
                 "openid",
-            ],
-        )
-        flow.redirect_uri = settings.google_redirect_uri
-        auth_url, _ = flow.authorization_url(state=state, access_type="offline", prompt="consent")
+            ]),
+            "state": state,
+            "access_type": "offline",
+            "prompt": "consent",
+        }
+        auth_url = "https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params)
         return {"auth_url": auth_url}
 
     elif provider == "outlook":
@@ -109,7 +105,7 @@ def oauth_callback(code: str, state: str, provider: str = None, db: Session = De
 
     try:
         if prov == "gmail":
-            account = _handle_gmail_callback(code, db)
+            account = _handle_gmail_callback(code, state_data, db)
         elif prov == "outlook":
             account = _handle_outlook_callback(code, db)
         else:
@@ -122,25 +118,33 @@ def oauth_callback(code: str, state: str, provider: str = None, db: Session = De
     return RedirectResponse(url=f"{cfg.frontend_url}/settings?connected={prov}&email={account.email_address}")
 
 
-def _handle_gmail_callback(code: str, db: Session) -> EmailAccount:
-    from google_auth_oauthlib.flow import Flow
+def _handle_gmail_callback(code: str, state_data: dict, db: Session) -> EmailAccount:
+    import urllib.parse
+    import urllib.request
+    from google.oauth2.credentials import Credentials
     from googleapiclient.discovery import build
 
-    flow = Flow.from_client_config(
-        {
-            "web": {
-                "client_id": settings.google_client_id,
-                "client_secret": settings.google_client_secret,
-                "redirect_uris": [settings.google_redirect_uri],
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token",
-            }
-        },
-        scopes=None,
+    # Exchange code for tokens directly via HTTP to avoid PKCE issues
+    token_data = {
+        "code": code,
+        "client_id": settings.google_client_id,
+        "client_secret": settings.google_client_secret,
+        "redirect_uri": settings.google_redirect_uri,
+        "grant_type": "authorization_code",
+    }
+    import httpx
+    resp = httpx.post("https://oauth2.googleapis.com/token", data=token_data)
+    if resp.status_code != 200:
+        raise Exception(f"Google token error: {resp.json()}")
+    tokens = resp.json()
+
+    creds = Credentials(
+        token=tokens["access_token"],
+        refresh_token=tokens.get("refresh_token"),
+        token_uri="https://oauth2.googleapis.com/token",
+        client_id=settings.google_client_id,
+        client_secret=settings.google_client_secret,
     )
-    flow.redirect_uri = settings.google_redirect_uri
-    flow.fetch_token(code=code)
-    creds = flow.credentials
 
     service = build("oauth2", "v2", credentials=creds)
     user_info = service.userinfo().get().execute()
