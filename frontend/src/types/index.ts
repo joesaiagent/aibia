@@ -75,6 +75,7 @@ export interface DashboardStats {
 
 export type AgentEvent =
   | { type: 'text'; content: string }
+  | { type: 'text_delta'; content: string }
   | { type: 'tool_start'; tool: string; input: Record<string, unknown> }
   | { type: 'tool_result'; tool: string; result: unknown }
   | { type: 'approval_created'; approval_id: string; title: string }

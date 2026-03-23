@@ -33,6 +33,9 @@ export default function AgentRun() {
     setRunning(true)
     setApprovalCount(0)
 
+    // streaming text step id
+    let streamingId: number | null = null
+
     try {
       const res = await fetch('http://localhost:8000/api/agent/run', {
         method: 'POST',
@@ -50,8 +53,27 @@ export default function AgentRun() {
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue
           const event: AgentEvent = JSON.parse(line.slice(6))
-          if (event.type === 'approval_created') setApprovalCount(c => c + 1)
-          setSteps(prev => [...prev, { id: stepIdRef.current++, event }])
+
+          if (event.type === 'text_delta') {
+            // Append to existing streaming step or create a new one
+            if (streamingId === null) {
+              streamingId = stepIdRef.current++
+              setSteps(prev => [...prev, { id: streamingId!, event: { type: 'text', content: event.content } }])
+            } else {
+              setSteps(prev => prev.map(s =>
+                s.id === streamingId
+                  ? { ...s, event: { type: 'text', content: (s.event as { type: 'text'; content: string }).content + event.content } }
+                  : s
+              ))
+            }
+          } else {
+            // Non-delta event: close the streaming step
+            if (event.type !== 'text') streamingId = null
+            if (event.type === 'approval_created') setApprovalCount(c => c + 1)
+            if (event.type !== 'text') {
+              setSteps(prev => [...prev, { id: stepIdRef.current++, event }])
+            }
+          }
         }
       }
     } catch (e) {
