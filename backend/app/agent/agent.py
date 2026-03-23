@@ -1,7 +1,9 @@
 import uuid
 import anthropic
+from dotenv import load_dotenv
 from app.agent.prompts import SYSTEM_PROMPT
 
+load_dotenv()
 client = anthropic.Anthropic()
 conversations: dict[str, list] = {}
 
