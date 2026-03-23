@@ -82,5 +82,17 @@
   font-size: 13px; font-weight: 600; color: white; flex-shrink: 0;
 }
 
-.user-name { font-size: 13px; font-weight: 500; color: #ccc; }
+.user-name { font-size: 13px; font-weight: 500; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .user-plan { font-size: 11px; color: #444; }
+
+.signout-btn {
+  background: transparent;
+  border: none;
+  color: #444;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.signout-btn:hover { color: #888; }

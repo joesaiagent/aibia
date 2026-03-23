@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { useUser, useClerk } from '@clerk/clerk-react'
 import { getPendingCount } from '../../api'
 import './Sidebar.css'
 
@@ -17,6 +18,11 @@ const nav = [
 export default function Sidebar() {
   const { data } = useQuery({ queryKey: ['pending-count'], queryFn: getPendingCount, refetchInterval: 10000 })
   const pendingCount = data?.count ?? 0
+  const { user } = useUser()
+  const { signOut } = useClerk()
+
+  const initials = user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0]?.toUpperCase() ?? '?'
+  const displayName = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] ?? 'User'
 
   return (
     <aside className="sidebar">
@@ -41,11 +47,12 @@ export default function Sidebar() {
 
       <div className="sidebar-footer">
         <div className="user-info">
-          <div className="user-avatar">✦</div>
-          <div>
-            <div className="user-name">aibia</div>
-            <div className="user-plan">beta</div>
+          <div className="user-avatar">{initials}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="user-name">{displayName}</div>
+            <div className="user-plan">aibia beta</div>
           </div>
+          <button className="signout-btn" onClick={() => signOut()} title="Sign out">↪</button>
         </div>
       </div>
     </aside>
