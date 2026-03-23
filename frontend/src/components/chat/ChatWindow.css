@@ -1,4 +1,4 @@
-.chat-layout { display: flex; height: 100%; }
+.chat-layout { display: flex; height: 100vh; }
 
 .chat-sidebar { width: 220px; border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; flex-shrink: 0; }
 .chat-sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #1a1a1a; font-size: 12px; font-weight: 600; color: #444; text-transform: uppercase; letter-spacing: 0.5px; }
