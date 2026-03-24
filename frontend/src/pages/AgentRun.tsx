@@ -38,9 +38,10 @@ export default function AgentRun() {
     let streamingId: number | null = null
 
     try {
+      const authHeaders = await getAuthHeaders()
       const res = await fetch('/api/agent/run', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({ task: trimmed }),
       })
 

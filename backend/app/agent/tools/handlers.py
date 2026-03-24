@@ -45,9 +45,9 @@ def handle_create_lead(input: dict, db: Session, user_id: str = "") -> dict:
 
 
 def handle_search_leads(input: dict, db: Session, user_id: str = "") -> dict:
-    query = db.query(Lead)
-    if user_id:
-        query = query.filter(Lead.user_id == user_id)
+    if not user_id:
+        return {"leads": []}
+    query = db.query(Lead).filter(Lead.user_id == user_id)
     if input.get("status"):
         query = query.filter(Lead.status == input["status"])
     if input.get("query"):
@@ -65,10 +65,9 @@ def handle_search_leads(input: dict, db: Session, user_id: str = "") -> dict:
 
 
 def handle_update_lead(input: dict, db: Session, user_id: str = "") -> dict:
-    query = db.query(Lead).filter(Lead.id == input["lead_id"])
-    if user_id:
-        query = query.filter(Lead.user_id == user_id)
-    lead = query.first()
+    if not user_id:
+        return {"error": "Not authenticated"}
+    lead = db.query(Lead).filter(Lead.id == input["lead_id"], Lead.user_id == user_id).first()
     if not lead:
         return {"error": f"Lead {input['lead_id']} not found"}
     if input.get("status"):
@@ -83,13 +82,13 @@ def handle_update_lead(input: dict, db: Session, user_id: str = "") -> dict:
 
 
 def handle_read_inbox(input: dict, db: Session, user_id: str = "") -> dict:
-    query = db.query(EmailAccount).filter(
+    if not user_id:
+        return {"error": "Not authenticated"}
+    account = db.query(EmailAccount).filter(
         EmailAccount.email_address == input["account_email"],
+        EmailAccount.user_id == user_id,
         EmailAccount.is_active == True,
-    )
-    if user_id:
-        query = query.filter(EmailAccount.user_id == user_id)
-    account = query.first()
+    ).first()
     if not account:
         return {"error": f"No connected account found for {input['account_email']}. Connect an email account in Settings."}
 

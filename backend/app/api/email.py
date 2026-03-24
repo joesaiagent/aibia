@@ -101,6 +101,11 @@ def oauth_callback(code: str, state: str, provider: str = None, db: Session = De
     state_data = _oauth_states.pop(state, None)
     if not state_data:
         raise HTTPException(status_code=400, detail="Invalid or expired OAuth state")
+    # Reject states older than 10 minutes
+    from datetime import datetime, timezone, timedelta
+    created = datetime.fromisoformat(state_data["created_at"])
+    if datetime.now(timezone.utc) - created > timedelta(minutes=10):
+        raise HTTPException(status_code=400, detail="Invalid or expired OAuth state")
 
     prov = provider or state_data["provider"]
 
@@ -112,9 +117,9 @@ def oauth_callback(code: str, state: str, provider: str = None, db: Session = De
             account = _handle_outlook_callback(code, db, callback_user_id)
         else:
             raise HTTPException(status_code=400, detail="Unknown provider")
-    except Exception as e:
+    except Exception:
         from app.config import settings as cfg
-        return RedirectResponse(url=f"{cfg.frontend_url}/settings?error={str(e)}")
+        return RedirectResponse(url=f"{cfg.frontend_url}/settings?error=oauth_failed")
 
     from app.config import settings as cfg
     return RedirectResponse(url=f"{cfg.frontend_url}/settings?connected={prov}&email={account.email_address}")
@@ -256,7 +261,7 @@ def get_inbox(db: Session = Depends(get_db), user_id: str = Depends(get_user_id)
                 msgs = []
             all_messages.extend(msgs)
         except Exception as e:
-            all_messages.append({"error": str(e), "account": account.email_address})
+            all_messages.append({"error": "Failed to fetch messages", "account": account.email_address})
 
     all_messages.sort(key=lambda m: m.get("received_at", ""), reverse=True)
     return all_messages

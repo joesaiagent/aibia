@@ -2,17 +2,31 @@ import axios from 'axios'
 
 const client = axios.create({ baseURL: '/api' })
 
-export function setAuthUserId(userId: string | null) {
-  if (userId) {
-    client.defaults.headers.common['X-User-ID'] = userId
-  } else {
-    delete client.defaults.headers.common['X-User-ID']
-  }
+type TokenGetter = () => Promise<string | null>
+let _getToken: TokenGetter | null = null
+
+export function setTokenGetter(fn: TokenGetter) {
+  _getToken = fn
 }
 
-export function getAuthHeaders(): Record<string, string> {
-  const userId = client.defaults.headers.common['X-User-ID']
-  return userId ? { 'X-User-ID': String(userId) } : {}
+// Attach Bearer token to every axios request automatically
+client.interceptors.request.use(async (config) => {
+  if (_getToken) {
+    const token = await _getToken()
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`
+    }
+  }
+  return config
+})
+
+// Used by raw fetch() calls (streaming endpoints)
+export async function getAuthHeaders(): Promise<Record<string, string>> {
+  if (_getToken) {
+    const token = await _getToken()
+    if (token) return { 'Authorization': `Bearer ${token}` }
+  }
+  return {}
 }
 
 export default client

@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ClerkProvider, SignedIn, SignedOut, useUser } from '@clerk/clerk-react'
+import { ClerkProvider, SignedIn, SignedOut, useUser, useAuth } from '@clerk/clerk-react'
 import './index.css'
 import App from './App'
 import Landing from './pages/Landing'
@@ -15,7 +15,7 @@ import Inbox from './pages/Inbox'
 import Social from './pages/Social'
 import Approvals from './pages/Approvals'
 import Settings from './pages/Settings'
-import client, { setAuthUserId } from './api/client'
+import client, { setTokenGetter } from './api/client'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -40,13 +40,15 @@ const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, sta
 
 function ProtectedApp() {
   const { user, isLoaded } = useUser()
+  const { getToken } = useAuth()
   const [subStatus, setSubStatus] = useState<'loading' | 'active' | 'inactive'>('loading')
 
   useEffect(() => {
     if (!isLoaded) return
     if (!user) { setSubStatus('inactive'); return }
 
-    setAuthUserId(user.id)
+    // Wire Clerk's getToken into the axios client interceptor
+    setTokenGetter(getToken)
 
     // Handle post-checkout redirect — give webhook a moment to process
     const params = new URLSearchParams(window.location.search)
@@ -54,14 +56,11 @@ function ProtectedApp() {
 
     const checkStatus = async (retries = 0) => {
       try {
-        const res = await client.get('/stripe/subscription/status', {
-          headers: { 'X-User-ID': user.id }
-        })
+        const res = await client.get('/stripe/subscription/status')
         const status = res.data.status
-        if ((status === 'active' || status === 'trialing')) {
+        if (status === 'active' || status === 'trialing') {
           setSubStatus('active')
         } else if (isCheckoutSuccess && retries < 5) {
-          // Webhook may not have fired yet — retry up to 5 times
           setTimeout(() => checkStatus(retries + 1), 2000)
         } else {
           setSubStatus('inactive')
@@ -72,7 +71,7 @@ function ProtectedApp() {
     }
 
     checkStatus()
-  }, [user, isLoaded])
+  }, [user, isLoaded, getToken])
 
   if (!isLoaded || subStatus === 'loading') {
     return <div style={{ minHeight: '100vh', background: '#0a0a0a' }} />

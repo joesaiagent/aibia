@@ -51,9 +51,10 @@ export default function ChatWindow() {
     setConversations(prev => prev.map(c => c.id === convId ? { ...c, messages: [...c.messages, { role: 'assistant', content: '' }] } : c))
 
     try {
+      const authHeaders = await getAuthHeaders()
       const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({ message: trimmed, conversation_id: convId }),
       })
       const reader = res.body!.getReader()

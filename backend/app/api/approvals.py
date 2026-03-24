@@ -149,8 +149,8 @@ def _execute_email_send(payload: dict, db: Session, user_id: str = None) -> dict
                 db=db,
             )
         return {"sent": True, "to": payload["to"], "via": account.provider}
-    except Exception as e:
-        return {"error": str(e)}
+    except Exception:
+        return {"error": "Failed to send email"}
 
 
 def _execute_social_post(payload: dict, item: ApprovalItem, db: Session) -> dict:
