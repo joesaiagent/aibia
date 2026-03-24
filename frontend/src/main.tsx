@@ -2,7 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-react'
+import { ClerkProvider, SignedIn, SignedOut, useUser } from '@clerk/clerk-react'
+import { setAuthUserId } from './api/client'
 import './index.css'
 import App from './App'
 import Landing from './pages/Landing'
@@ -36,9 +37,16 @@ const router = createBrowserRouter([
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30000 } } })
 
+function AuthSync() {
+  const { user } = useUser()
+  setAuthUserId(user?.id ?? null)
+  return null
+}
+
 function ProtectedApp() {
   return (
     <>
+      <AuthSync />
       <SignedIn>
         <RouterProvider router={router} />
       </SignedIn>

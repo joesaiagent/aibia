@@ -5,6 +5,7 @@ from app.models.base import Base, TimestampMixin
 class SocialPost(Base, TimestampMixin):
     __tablename__ = "social_posts"
 
+    user_id = Column(String, nullable=True, index=True)
     platform = Column(String, nullable=False)       # instagram | twitter | tiktok | linkedin | facebook
     content = Column(String, nullable=False)
     media_urls = Column(String)                     # JSON array

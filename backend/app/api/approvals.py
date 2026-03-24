@@ -7,6 +7,7 @@ from typing import Optional
 from app.database import get_db
 from app.models.approval_item import ApprovalItem
 from app.models.social_post import SocialPost
+from app.api.deps import get_user_id
 
 router = APIRouter()
 
@@ -31,8 +32,8 @@ def approval_to_dict(a: ApprovalItem) -> dict:
 
 
 @router.get("")
-def list_approvals(status: Optional[str] = "pending", db: Session = Depends(get_db)):
-    query = db.query(ApprovalItem)
+def list_approvals(status: Optional[str] = "pending", db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    query = db.query(ApprovalItem).filter(ApprovalItem.user_id == user_id)
     if status:
         query = query.filter(ApprovalItem.status == status)
     items = query.order_by(ApprovalItem.created_at.desc()).all()
@@ -40,22 +41,22 @@ def list_approvals(status: Optional[str] = "pending", db: Session = Depends(get_
 
 
 @router.get("/count/pending")
-def pending_count(db: Session = Depends(get_db)):
-    count = db.query(ApprovalItem).filter(ApprovalItem.status == "pending").count()
+def pending_count(db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    count = db.query(ApprovalItem).filter(ApprovalItem.status == "pending", ApprovalItem.user_id == user_id).count()
     return {"count": count}
 
 
 @router.get("/{approval_id}")
-def get_approval(approval_id: str, db: Session = Depends(get_db)):
-    item = db.query(ApprovalItem).filter(ApprovalItem.id == approval_id).first()
+def get_approval(approval_id: str, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    item = db.query(ApprovalItem).filter(ApprovalItem.id == approval_id, ApprovalItem.user_id == user_id).first()
     if not item:
         raise HTTPException(status_code=404, detail="Approval not found")
     return approval_to_dict(item)
 
 
 @router.post("/{approval_id}/approve")
-def approve(approval_id: str, data: ReviewRequest, db: Session = Depends(get_db)):
-    item = db.query(ApprovalItem).filter(ApprovalItem.id == approval_id).first()
+def approve(approval_id: str, data: ReviewRequest, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    item = db.query(ApprovalItem).filter(ApprovalItem.id == approval_id, ApprovalItem.user_id == user_id).first()
     if not item:
         raise HTTPException(status_code=404, detail="Approval not found")
     if item.status != "pending":
@@ -79,8 +80,8 @@ def approve(approval_id: str, data: ReviewRequest, db: Session = Depends(get_db)
 
 
 @router.post("/{approval_id}/reject")
-def reject(approval_id: str, data: ReviewRequest, db: Session = Depends(get_db)):
-    item = db.query(ApprovalItem).filter(ApprovalItem.id == approval_id).first()
+def reject(approval_id: str, data: ReviewRequest, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    item = db.query(ApprovalItem).filter(ApprovalItem.id == approval_id, ApprovalItem.user_id == user_id).first()
     if not item:
         raise HTTPException(status_code=404, detail="Approval not found")
     if item.status != "pending":

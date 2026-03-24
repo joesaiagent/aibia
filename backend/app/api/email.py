@@ -8,6 +8,7 @@ from app.database import get_db
 from app.models.email_account import EmailAccount
 from app.models.email_message import EmailMessage
 from app.config import settings
+from app.api.deps import get_user_id
 
 router = APIRouter()
 
@@ -27,14 +28,14 @@ def account_to_dict(a: EmailAccount) -> dict:
 
 
 @router.get("/accounts")
-def list_accounts(db: Session = Depends(get_db)):
-    accounts = db.query(EmailAccount).filter(EmailAccount.is_active == True).all()
+def list_accounts(db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    accounts = db.query(EmailAccount).filter(EmailAccount.user_id == user_id, EmailAccount.is_active == True).all()
     return [account_to_dict(a) for a in accounts]
 
 
 @router.delete("/accounts/{account_id}")
-def disconnect_account(account_id: str, db: Session = Depends(get_db)):
-    account = db.query(EmailAccount).filter(EmailAccount.id == account_id).first()
+def disconnect_account(account_id: str, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    account = db.query(EmailAccount).filter(EmailAccount.id == account_id, EmailAccount.user_id == user_id).first()
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
     account.is_active = False
@@ -43,12 +44,12 @@ def disconnect_account(account_id: str, db: Session = Depends(get_db)):
 
 
 @router.get("/oauth/initiate")
-def initiate_oauth(provider: str):
+def initiate_oauth(provider: str, user_id: str = Depends(get_user_id)):
     if provider not in ("gmail", "outlook"):
         raise HTTPException(status_code=400, detail="Provider must be gmail or outlook")
 
     state = secrets.token_urlsafe(32)
-    _oauth_states[state] = {"provider": provider, "created_at": datetime.now(timezone.utc).isoformat()}
+    _oauth_states[state] = {"provider": provider, "user_id": user_id, "created_at": datetime.now(timezone.utc).isoformat()}
 
     if provider == "gmail":
         if not settings.google_client_id:
@@ -103,11 +104,12 @@ def oauth_callback(code: str, state: str, provider: str = None, db: Session = De
 
     prov = provider or state_data["provider"]
 
+    callback_user_id = state_data.get("user_id", "")
     try:
         if prov == "gmail":
-            account = _handle_gmail_callback(code, state_data, db)
+            account = _handle_gmail_callback(code, state_data, db, callback_user_id)
         elif prov == "outlook":
-            account = _handle_outlook_callback(code, db)
+            account = _handle_outlook_callback(code, db, callback_user_id)
         else:
             raise HTTPException(status_code=400, detail="Unknown provider")
     except Exception as e:
@@ -118,7 +120,7 @@ def oauth_callback(code: str, state: str, provider: str = None, db: Session = De
     return RedirectResponse(url=f"{cfg.frontend_url}/settings?connected={prov}&email={account.email_address}")
 
 
-def _handle_gmail_callback(code: str, state_data: dict, db: Session) -> EmailAccount:
+def _handle_gmail_callback(code: str, state_data: dict, db: Session, user_id: str = "") -> EmailAccount:
     import urllib.parse
     import urllib.request
     from google.oauth2.credentials import Credentials
@@ -154,7 +156,7 @@ def _handle_gmail_callback(code: str, state_data: dict, db: Session) -> EmailAcc
     encrypted_access = _encrypt(creds.token)
     encrypted_refresh = _encrypt(creds.refresh_token or "")
 
-    existing = db.query(EmailAccount).filter(EmailAccount.email_address == email).first()
+    existing = db.query(EmailAccount).filter(EmailAccount.email_address == email, EmailAccount.user_id == (user_id or None)).first()
     if existing:
         existing.access_token = encrypted_access
         existing.refresh_token = encrypted_refresh
@@ -170,6 +172,7 @@ def _handle_gmail_callback(code: str, state_data: dict, db: Session) -> EmailAcc
         refresh_token=encrypted_refresh,
         token_expiry=creds.expiry,
         scopes=json.dumps(list(creds.scopes or [])),
+        user_id=user_id or None,
     )
     db.add(account)
     db.commit()
@@ -177,7 +180,7 @@ def _handle_gmail_callback(code: str, state_data: dict, db: Session) -> EmailAcc
     return account
 
 
-def _handle_outlook_callback(code: str, db: Session) -> EmailAccount:
+def _handle_outlook_callback(code: str, db: Session, user_id: str = "") -> EmailAccount:
     import msal
     import httpx
 
@@ -206,7 +209,7 @@ def _handle_outlook_callback(code: str, db: Session) -> EmailAccount:
     encrypted_access = _encrypt(access_token)
     encrypted_refresh = _encrypt(refresh_token)
 
-    existing = db.query(EmailAccount).filter(EmailAccount.email_address == email).first()
+    existing = db.query(EmailAccount).filter(EmailAccount.email_address == email, EmailAccount.user_id == (user_id or None)).first()
     if existing:
         existing.access_token = encrypted_access
         existing.refresh_token = encrypted_refresh
@@ -220,6 +223,7 @@ def _handle_outlook_callback(code: str, db: Session) -> EmailAccount:
         display_name=name,
         access_token=encrypted_access,
         refresh_token=encrypted_refresh,
+        user_id=user_id or None,
     )
     db.add(account)
     db.commit()
@@ -235,9 +239,9 @@ def _encrypt(value: str) -> str:
 
 
 @router.get("/inbox")
-def get_inbox(db: Session = Depends(get_db)):
+def get_inbox(db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
     """Fetch and cache latest emails from all connected accounts."""
-    accounts = db.query(EmailAccount).filter(EmailAccount.is_active == True).all()
+    accounts = db.query(EmailAccount).filter(EmailAccount.user_id == user_id, EmailAccount.is_active == True).all()
     all_messages = []
 
     for account in accounts:

@@ -7,7 +7,7 @@ from app.models.email_message import EmailMessage
 from app.models.email_account import EmailAccount
 
 
-def handle_web_search(input: dict, db: Session) -> dict:
+def handle_web_search(input: dict, db: Session, user_id: str = "") -> dict:
     from app.config import settings
     try:
         from tavily import TavilyClient
@@ -26,7 +26,7 @@ def handle_web_search(input: dict, db: Session) -> dict:
         return {"error": str(e), "hint": "Add TAVILY_API_KEY to backend/.env — get one at https://tavily.com"}
 
 
-def handle_create_lead(input: dict, db: Session) -> dict:
+def handle_create_lead(input: dict, db: Session, user_id: str = "") -> dict:
     lead = Lead(
         name=input["name"],
         company=input.get("company"),
@@ -36,6 +36,7 @@ def handle_create_lead(input: dict, db: Session) -> dict:
         linkedin_url=input.get("linkedin_url"),
         source=input.get("source", "manual"),
         notes=input.get("notes"),
+        user_id=user_id or None,
     )
     db.add(lead)
     db.commit()
@@ -43,8 +44,10 @@ def handle_create_lead(input: dict, db: Session) -> dict:
     return {"lead_id": lead.id, "name": lead.name, "status": "created"}
 
 
-def handle_search_leads(input: dict, db: Session) -> dict:
+def handle_search_leads(input: dict, db: Session, user_id: str = "") -> dict:
     query = db.query(Lead)
+    if user_id:
+        query = query.filter(Lead.user_id == user_id)
     if input.get("status"):
         query = query.filter(Lead.status == input["status"])
     if input.get("query"):
@@ -61,8 +64,11 @@ def handle_search_leads(input: dict, db: Session) -> dict:
     }
 
 
-def handle_update_lead(input: dict, db: Session) -> dict:
-    lead = db.query(Lead).filter(Lead.id == input["lead_id"]).first()
+def handle_update_lead(input: dict, db: Session, user_id: str = "") -> dict:
+    query = db.query(Lead).filter(Lead.id == input["lead_id"])
+    if user_id:
+        query = query.filter(Lead.user_id == user_id)
+    lead = query.first()
     if not lead:
         return {"error": f"Lead {input['lead_id']} not found"}
     if input.get("status"):
@@ -76,11 +82,14 @@ def handle_update_lead(input: dict, db: Session) -> dict:
     return {"lead_id": lead.id, "updated": True}
 
 
-def handle_read_inbox(input: dict, db: Session) -> dict:
-    account = db.query(EmailAccount).filter(
+def handle_read_inbox(input: dict, db: Session, user_id: str = "") -> dict:
+    query = db.query(EmailAccount).filter(
         EmailAccount.email_address == input["account_email"],
         EmailAccount.is_active == True,
-    ).first()
+    )
+    if user_id:
+        query = query.filter(EmailAccount.user_id == user_id)
+    account = query.first()
     if not account:
         return {"error": f"No connected account found for {input['account_email']}. Connect an email account in Settings."}
 
@@ -99,7 +108,7 @@ def handle_read_inbox(input: dict, db: Session) -> dict:
     }
 
 
-def handle_draft_email(input: dict, db: Session) -> dict:
+def handle_draft_email(input: dict, db: Session, user_id: str = "") -> dict:
     payload = json.dumps({
         "to": input["to"],
         "subject": input["subject"],
@@ -112,6 +121,7 @@ def handle_draft_email(input: dict, db: Session) -> dict:
         title=f"Send email to {input['to']}: {input['subject'][:50]}",
         description="Outreach email drafted by aibia agent",
         payload=payload,
+        user_id=user_id or None,
     )
     db.add(approval)
     db.commit()
@@ -119,13 +129,14 @@ def handle_draft_email(input: dict, db: Session) -> dict:
     return {"status": "queued_for_approval", "approval_id": approval.id, "title": approval.title}
 
 
-def handle_draft_social_post(input: dict, db: Session) -> dict:
+def handle_draft_social_post(input: dict, db: Session, user_id: str = "") -> dict:
     hashtags = json.dumps(input.get("hashtags", []))
     post = SocialPost(
         platform=input["platform"],
         content=input["content"],
         hashtags=hashtags,
         status="pending_approval",
+        user_id=user_id or None,
     )
     db.add(post)
     db.flush()
@@ -143,6 +154,7 @@ def handle_draft_social_post(input: dict, db: Session) -> dict:
         description="Social post drafted by aibia agent",
         payload=payload,
         reference_id=post.id,
+        user_id=user_id or None,
     )
     db.add(approval)
     post.approval_item_id = approval.id

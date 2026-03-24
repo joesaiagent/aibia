@@ -6,6 +6,7 @@ from app.models.base import Base, TimestampMixin
 class Lead(Base, TimestampMixin):
     __tablename__ = "leads"
 
+    user_id = Column(String, nullable=True, index=True)
     name = Column(String, nullable=False)
     company = Column(String)
     email = Column(String)

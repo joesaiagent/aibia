@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from app.database import get_db
 from app.models.lead import Lead, LeadNote
+from app.api.deps import get_user_id
 
 router = APIRouter()
 
@@ -58,20 +59,20 @@ def list_leads(
     search: Optional[str] = None,
     status: Optional[str] = None,
     db: Session = Depends(get_db),
+    user_id: str = Depends(get_user_id),
 ):
-    query = db.query(Lead)
+    query = db.query(Lead).filter(Lead.user_id == user_id)
     if status:
         query = query.filter(Lead.status == status)
     if search:
         q = f"%{search}%"
         query = query.filter(Lead.name.ilike(q) | Lead.company.ilike(q) | Lead.email.ilike(q))
-    leads = query.order_by(Lead.created_at.desc()).all()
-    return [lead_to_dict(l) for l in leads]
+    return [lead_to_dict(l) for l in query.order_by(Lead.created_at.desc()).all()]
 
 
 @router.post("")
-def create_lead(data: LeadCreate, db: Session = Depends(get_db)):
-    lead = Lead(**data.model_dump())
+def create_lead(data: LeadCreate, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    lead = Lead(**data.model_dump(), user_id=user_id)
     db.add(lead)
     db.commit()
     db.refresh(lead)
@@ -79,8 +80,8 @@ def create_lead(data: LeadCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/{lead_id}")
-def get_lead(lead_id: str, db: Session = Depends(get_db)):
-    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+def get_lead(lead_id: str, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    lead = db.query(Lead).filter(Lead.id == lead_id, Lead.user_id == user_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     result = lead_to_dict(lead)
@@ -92,8 +93,8 @@ def get_lead(lead_id: str, db: Session = Depends(get_db)):
 
 
 @router.patch("/{lead_id}")
-def update_lead(lead_id: str, data: LeadUpdate, db: Session = Depends(get_db)):
-    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+def update_lead(lead_id: str, data: LeadUpdate, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    lead = db.query(Lead).filter(Lead.id == lead_id, Lead.user_id == user_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     for field, value in data.model_dump(exclude_none=True).items():
@@ -104,8 +105,8 @@ def update_lead(lead_id: str, data: LeadUpdate, db: Session = Depends(get_db)):
 
 
 @router.delete("/{lead_id}")
-def delete_lead(lead_id: str, db: Session = Depends(get_db)):
-    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+def delete_lead(lead_id: str, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    lead = db.query(Lead).filter(Lead.id == lead_id, Lead.user_id == user_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     db.delete(lead)
@@ -114,8 +115,8 @@ def delete_lead(lead_id: str, db: Session = Depends(get_db)):
 
 
 @router.post("/{lead_id}/notes")
-def add_note(lead_id: str, data: NoteCreate, db: Session = Depends(get_db)):
-    lead = db.query(Lead).filter(Lead.id == lead_id).first()
+def add_note(lead_id: str, data: NoteCreate, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    lead = db.query(Lead).filter(Lead.id == lead_id, Lead.user_id == user_id).first()
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     note = LeadNote(lead_id=lead_id, content=data.content, source="user")

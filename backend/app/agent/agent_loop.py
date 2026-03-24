@@ -27,7 +27,7 @@ Never send emails or post to social media directly — always queue for approval
 MAX_ITERATIONS = 20
 
 
-async def run_agent_loop(task: str, db: Session) -> AsyncGenerator[dict, None]:
+async def run_agent_loop(task: str, db: Session, user_id: str = "") -> AsyncGenerator[dict, None]:
     messages = [{"role": "user", "content": task}]
 
     for _ in range(MAX_ITERATIONS):
@@ -123,7 +123,7 @@ async def run_agent_loop(task: str, db: Session) -> AsyncGenerator[dict, None]:
             yield {"type": "tool_start", "tool": block.name, "input": block.input}
 
             handler = TOOL_HANDLERS.get(block.name)
-            result = handler(block.input, db) if handler else {"error": f"Unknown tool: {block.name}"}
+            result = handler(block.input, db, user_id) if handler else {"error": f"Unknown tool: {block.name}"}
 
             yield {"type": "tool_result", "tool": block.name, "result": result}
 
