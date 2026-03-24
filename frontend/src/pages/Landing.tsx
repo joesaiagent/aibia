@@ -72,6 +72,18 @@ export default function Landing() {
   const [form, setForm] = useState<ContactForm>({ name: '', company: '', email: '', team_size: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+
+  const handleCheckout = async () => {
+    setCheckoutLoading(true)
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' })
+      const { url } = await res.json()
+      window.location.href = url
+    } catch {
+      setCheckoutLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -193,9 +205,9 @@ export default function Landing() {
             <ul className="pricing-features">
               {SOLO_FEATURES.map(f => <li key={f}><span>✓</span>{f}</li>)}
             </ul>
-            <SignUpButton mode="modal">
-              <button className="btn-primary pricing-btn">Get started →</button>
-            </SignUpButton>
+            <button className="btn-primary pricing-btn" onClick={handleCheckout} disabled={checkoutLoading}>
+              {checkoutLoading ? 'Loading...' : 'Get started →'}
+            </button>
           </div>
 
           {/* Business */}

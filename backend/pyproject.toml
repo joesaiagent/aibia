@@ -21,7 +21,8 @@ dependencies = [
     "google-api-python-client (>=2.193.0,<3.0.0)",
     "msal (>=1.35.1,<2.0.0)",
     "cryptography (>=46.0.5,<47.0.0)",
-    "httpx (>=0.28.1,<0.29.0)"
+    "httpx (>=0.28.1,<0.29.0)",
+    "stripe (>=14.4.1,<15.0.0)"
 ]
 
 

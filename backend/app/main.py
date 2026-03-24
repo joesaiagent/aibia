@@ -11,6 +11,7 @@ from app.api.social import router as social_router
 from app.api.email import router as email_router
 from app.api.dashboard import router as dashboard_router
 from app.api.contact import router as contact_router
+from app.api.stripe_billing import router as stripe_router
 
 
 @asynccontextmanager
@@ -36,3 +37,4 @@ app.include_router(social_router, prefix="/api/social")
 app.include_router(email_router, prefix="/api/email")
 app.include_router(dashboard_router, prefix="/api/dashboard")
 app.include_router(contact_router, prefix="/api")
+app.include_router(stripe_router, prefix="/api")
