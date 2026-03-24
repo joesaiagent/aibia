@@ -24,7 +24,7 @@ app = FastAPI(title="aibia", description="AI agent for growing businesses", life
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174"],
+    allow_origins=["http://localhost:5173", "http://localhost:5174", "https://aibia.io", "https://www.aibia.io"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
