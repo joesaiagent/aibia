@@ -1,0 +1,107 @@
+.upgrade-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  padding: 2rem;
+}
+
+.upgrade-card {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}
+
+.upgrade-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+}
+
+.upgrade-price {
+  margin-bottom: 0.5rem;
+}
+
+.upgrade-amount {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.upgrade-period {
+  font-size: 1rem;
+  color: #888;
+}
+
+.upgrade-subtitle {
+  color: #aaa;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.upgrade-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  text-align: left;
+}
+
+.upgrade-features li {
+  color: #ccc;
+  padding: 0.4rem 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.upgrade-check {
+  color: #00c6ff;
+  font-weight: 700;
+}
+
+.upgrade-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.upgrade-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.upgrade-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.upgrade-error {
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+}
+
+.upgrade-note {
+  color: #555;
+  font-size: 0.8rem;
+  margin-top: 1rem;
+}

@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     stripe_secret_key: str = ""
     stripe_publishable_key: str = ""
     stripe_price_id: str = ""
+    stripe_webhook_secret: str = ""
 
     model_config = {"env_file": str(ENV_FILE), "extra": "ignore"}
 
