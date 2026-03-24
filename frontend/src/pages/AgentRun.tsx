@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import type { AgentEvent } from '../types'
+import { getAuthHeaders } from '../api/client'
 import './AgentRun.css'
 
 interface AgentStep {
@@ -37,9 +38,9 @@ export default function AgentRun() {
     let streamingId: number | null = null
 
     try {
-      const res = await fetch('http://localhost:8000/api/agent/run', {
+      const res = await fetch('/api/agent/run', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify({ task: trimmed }),
       })
 

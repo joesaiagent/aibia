@@ -9,11 +9,13 @@ client = anthropic.Anthropic()
 conversations: dict[str, list] = {}
 
 
-async def stream_agent(message: str, conversation_id: str | None) -> AsyncGenerator[dict, None]:
+async def stream_agent(message: str, conversation_id: str | None, user_id: str = "") -> AsyncGenerator[dict, None]:
     if not conversation_id:
         conversation_id = str(uuid.uuid4())
 
-    history = conversations.setdefault(conversation_id, [])
+    # Scope conversation history by user to prevent cross-user access
+    scoped_key = f"{user_id}:{conversation_id}"
+    history = conversations.setdefault(scoped_key, [])
     history.append({"role": "user", "content": message})
 
     # Yield conversation_id first so the frontend can track it

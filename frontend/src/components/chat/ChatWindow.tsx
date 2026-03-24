@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { getAuthHeaders } from '../../api/client'
 import './ChatWindow.css'
 
 interface Message { role: 'user' | 'assistant'; content: string }
@@ -50,8 +51,9 @@ export default function ChatWindow() {
     setConversations(prev => prev.map(c => c.id === convId ? { ...c, messages: [...c.messages, { role: 'assistant', content: '' }] } : c))
 
     try {
-      const res = await fetch('http://localhost:8000/api/chat', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify({ message: trimmed, conversation_id: convId }),
       })
       const reader = res.body!.getReader()

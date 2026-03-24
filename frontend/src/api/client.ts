@@ -10,4 +10,9 @@ export function setAuthUserId(userId: string | null) {
   }
 }
 
+export function getAuthHeaders(): Record<string, string> {
+  const userId = client.defaults.headers.common['X-User-ID']
+  return userId ? { 'X-User-ID': String(userId) } : {}
+}
+
 export default client

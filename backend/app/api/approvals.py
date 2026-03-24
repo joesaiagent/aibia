@@ -69,7 +69,7 @@ def approve(approval_id: str, data: ReviewRequest, db: Session = Depends(get_db)
     # Execute the action
     payload = json.loads(item.payload)
     if item.type == "email_send":
-        result = _execute_email_send(payload, db)
+        result = _execute_email_send(payload, db, item.user_id)
     elif item.type == "social_post":
         result = _execute_social_post(payload, item, db)
     else:
@@ -92,7 +92,7 @@ def reject(approval_id: str, data: ReviewRequest, db: Session = Depends(get_db),
     item.reviewer_note = data.reviewer_note
 
     if item.type == "social_post" and item.reference_id:
-        post = db.query(SocialPost).filter(SocialPost.id == item.reference_id).first()
+        post = db.query(SocialPost).filter(SocialPost.id == item.reference_id, SocialPost.user_id == user_id).first()
         if post:
             post.status = "draft"
 
@@ -100,7 +100,7 @@ def reject(approval_id: str, data: ReviewRequest, db: Session = Depends(get_db),
     return {"rejected": True}
 
 
-def _execute_email_send(payload: dict, db: Session) -> dict:
+def _execute_email_send(payload: dict, db: Session, user_id: str = None) -> dict:
     from app.config import settings
 
     # Try SMTP first (simpler, works with Gmail app password)
@@ -117,13 +117,12 @@ def _execute_email_send(payload: dict, db: Session) -> dict:
 
     # Fall back to OAuth account
     from app.models.email_account import EmailAccount
-    # Try to find the specific account, otherwise use any active one
-    account = db.query(EmailAccount).filter(
-        EmailAccount.email_address == payload.get("from_account"),
-        EmailAccount.is_active == True,
-    ).first()
+    base = db.query(EmailAccount).filter(EmailAccount.is_active == True)
+    if user_id:
+        base = base.filter(EmailAccount.user_id == user_id)
+    account = base.filter(EmailAccount.email_address == payload.get("from_account")).first()
     if not account:
-        account = db.query(EmailAccount).filter(EmailAccount.is_active == True).first()
+        account = base.first()
     if not account:
         return {
             "error": "No email configured. Add SMTP_HOST, SMTP_USER, and SMTP_PASSWORD to backend/.env, "
@@ -156,7 +155,7 @@ def _execute_email_send(payload: dict, db: Session) -> dict:
 
 def _execute_social_post(payload: dict, item: ApprovalItem, db: Session) -> dict:
     if item.reference_id:
-        post = db.query(SocialPost).filter(SocialPost.id == item.reference_id).first()
+        post = db.query(SocialPost).filter(SocialPost.id == item.reference_id, SocialPost.user_id == item.user_id).first()
         if post:
             post.status = "approved"
     # Social platform posting requires developer accounts
