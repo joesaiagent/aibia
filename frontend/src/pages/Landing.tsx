@@ -219,10 +219,8 @@ export default function Landing() {
       {/* CTA */}
       <section className="landing-final-cta">
         <h2>Ready to grow your business?</h2>
-        <p>Join the waitlist and be first to get access.</p>
-        <SignUpButton mode="modal">
-          <button className="btn-primary btn-lg">Get started free →</button>
-        </SignUpButton>
+        <p>Get in touch and we'll set you up with the right plan.</p>
+        <button className="btn-primary btn-lg" onClick={() => setShowModal(true)}>Contact us →</button>
       </section>
 
       {/* Footer */}
