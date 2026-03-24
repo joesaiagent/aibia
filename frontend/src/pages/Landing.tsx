@@ -99,9 +99,7 @@ export default function Landing() {
           <SignInButton mode="modal">
             <button className="btn-ghost">Sign in</button>
           </SignInButton>
-          <SignUpButton mode="modal">
-            <button className="btn-primary">Get started free</button>
-          </SignUpButton>
+          <button className="btn-primary" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}>See Pricing</button>
         </div>
       </nav>
 
@@ -118,7 +116,7 @@ export default function Landing() {
         </p>
         <div className="landing-cta-group">
           <SignUpButton mode="modal">
-            <button className="btn-primary btn-lg">Start for free →</button>
+            <button className="btn-primary btn-lg">Grant Access Key →</button>
           </SignUpButton>
           <a
             href="https://github.com/joesaiagent/aibia"
@@ -178,7 +176,7 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section className="landing-section landing-pricing">
+      <section id="pricing" className="landing-section landing-pricing">
         <h2 className="landing-section-title">Simple pricing</h2>
         <p className="landing-section-sub">Start solo. Scale with your team.</p>
         <div className="pricing-cards">
