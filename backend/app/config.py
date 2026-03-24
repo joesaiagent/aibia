@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     # Frontend URL for OAuth redirects
     frontend_url: str = "http://localhost:5174"
 
+    # Database
+    database_url: str = "sqlite:///./aibia.db"
+
     # Stripe
     stripe_secret_key: str = ""
     stripe_publishable_key: str = ""
