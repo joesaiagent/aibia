@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { SignUpButton, SignInButton } from '@clerk/clerk-react'
 import './Landing.css'
 
@@ -40,7 +41,55 @@ const HOW_IT_WORKS = [
   { step: '3', title: 'Review & approve', desc: 'aibia does the work and puts everything in your approval queue. You decide what goes out.' },
 ]
 
+const SOLO_FEATURES = [
+  'AI agent — unlimited tasks',
+  'Lead generation & pipeline',
+  'Email outreach (Gmail / Outlook)',
+  'Social media post drafting',
+  'Human-in-the-loop approvals',
+  '1 user',
+]
+
+const BUSINESS_FEATURES = [
+  'Everything in Solo',
+  'Multiple team members',
+  'Priority support',
+  'Custom onboarding call',
+  'Volume pricing',
+  'Dedicated account manager',
+]
+
+interface ContactForm {
+  name: string
+  company: string
+  email: string
+  team_size: string
+  message: string
+}
+
 export default function Landing() {
+  const [showModal, setShowModal] = useState(false)
+  const [form, setForm] = useState<ContactForm>({ name: '', company: '', email: '', team_size: '', message: '' })
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      setSubmitted(true)
+    } catch {
+      setSubmitted(true)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <div className="landing">
       {/* Nav */}
@@ -128,6 +177,47 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section className="landing-section landing-pricing">
+        <h2 className="landing-section-title">Simple pricing</h2>
+        <p className="landing-section-sub">Start solo. Scale with your team.</p>
+        <div className="pricing-cards">
+
+          {/* Solo */}
+          <div className="pricing-card pricing-featured">
+            <div className="pricing-badge">Most popular</div>
+            <h3>aibia Solo</h3>
+            <div className="pricing-price">
+              <span className="pricing-amount">$65</span>
+              <span className="pricing-period">/month</span>
+            </div>
+            <p className="pricing-desc">Everything you need to run AI-powered outreach on your own.</p>
+            <ul className="pricing-features">
+              {SOLO_FEATURES.map(f => <li key={f}><span>✓</span>{f}</li>)}
+            </ul>
+            <SignUpButton mode="modal">
+              <button className="btn-primary pricing-btn">Get started →</button>
+            </SignUpButton>
+          </div>
+
+          {/* Business */}
+          <div className="pricing-card">
+            <h3>aibia Business</h3>
+            <div className="pricing-price">
+              <span className="pricing-amount">Custom</span>
+            </div>
+            <p className="pricing-desc">For teams that want to scale outreach across the whole company.</p>
+            <ul className="pricing-features">
+              {BUSINESS_FEATURES.map(f => <li key={f}><span>✓</span>{f}</li>)}
+            </ul>
+            <button className="btn-ghost pricing-btn" onClick={() => setShowModal(true)}>
+              Contact us →
+            </button>
+          </div>
+
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="landing-final-cta">
         <h2>Ready to grow your business?</h2>
@@ -143,6 +233,80 @@ export default function Landing() {
         <span>Open source · Built for growing businesses</span>
         <a href="https://github.com/joesaiagent/aibia" target="_blank" rel="noopener noreferrer">GitHub</a>
       </footer>
+
+      {/* Contact Modal */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowModal(false)}>✕</button>
+            {submitted ? (
+              <div className="modal-success">
+                <div className="modal-success-icon">✓</div>
+                <h3>We'll be in touch!</h3>
+                <p>Thanks for your interest in aibia Business. Expect an email from us within 24 hours.</p>
+                <a
+                  href="https://calendly.com/joesaiagent/30min"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary"
+                >
+                  Or book a call now →
+                </a>
+              </div>
+            ) : (
+              <>
+                <h3>Tell us about your team</h3>
+                <p className="modal-sub">We'll reach out to discuss a plan that fits your business.</p>
+                <form onSubmit={handleSubmit} className="contact-form">
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Name</label>
+                      <input required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Your name" />
+                    </div>
+                    <div className="form-group">
+                      <label>Company</label>
+                      <input required value={form.company} onChange={e => setForm(p => ({ ...p, company: e.target.value }))} placeholder="Company name" />
+                    </div>
+                  </div>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input required type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@company.com" />
+                    </div>
+                    <div className="form-group">
+                      <label>Team size</label>
+                      <select required value={form.team_size} onChange={e => setForm(p => ({ ...p, team_size: e.target.value }))}>
+                        <option value="">Select...</option>
+                        <option>2–5 people</option>
+                        <option>6–15 people</option>
+                        <option>16–50 people</option>
+                        <option>50+ people</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>What are you trying to accomplish? <span>(optional)</span></label>
+                    <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} placeholder="Tell us about your goals..." rows={3} />
+                  </div>
+                  <div className="form-actions">
+                    <a
+                      href="https://calendly.com/joesaiagent/30min"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-ghost"
+                    >
+                      Book a call instead
+                    </a>
+                    <button type="submit" className="btn-primary" disabled={submitting}>
+                      {submitting ? 'Sending...' : 'Send message →'}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

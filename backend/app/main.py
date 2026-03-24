@@ -10,6 +10,7 @@ from app.api.approvals import router as approvals_router
 from app.api.social import router as social_router
 from app.api.email import router as email_router
 from app.api.dashboard import router as dashboard_router
+from app.api.contact import router as contact_router
 
 
 @asynccontextmanager
@@ -34,3 +35,4 @@ app.include_router(approvals_router, prefix="/api/approvals")
 app.include_router(social_router, prefix="/api/social")
 app.include_router(email_router, prefix="/api/email")
 app.include_router(dashboard_router, prefix="/api/dashboard")
+app.include_router(contact_router, prefix="/api")

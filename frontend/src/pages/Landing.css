@@ -370,8 +370,273 @@
   color: #aaa;
 }
 
+/* Pricing */
+.landing-pricing {
+  background: #0d0d0d;
+  max-width: 100%;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.landing-pricing .landing-section-title,
+.landing-pricing .landing-section-sub,
+.pricing-cards {
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pricing-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.pricing-card {
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 16px;
+  padding: 36px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-card.pricing-featured {
+  border-color: rgba(124, 111, 247, 0.4);
+  background: rgba(124, 111, 247, 0.04);
+}
+
+.pricing-badge {
+  display: inline-block;
+  background: rgba(124, 111, 247, 0.15);
+  color: #9d94f5;
+  border: 1px solid rgba(124, 111, 247, 0.3);
+  border-radius: 100px;
+  padding: 3px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  width: fit-content;
+}
+
+.pricing-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 16px;
+}
+
+.pricing-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.pricing-amount {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.04em;
+}
+
+.pricing-period {
+  font-size: 1rem;
+  color: #666;
+}
+
+.pricing-desc {
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.pricing-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.pricing-features li {
+  display: flex;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: #bbb;
+}
+
+.pricing-features li span {
+  color: #7c6ff7;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.pricing-btn {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 560px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s;
+}
+
+.modal-close:hover { color: #aaa; }
+
+.modal h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px;
+}
+
+.modal-sub {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 28px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #aaa;
+}
+
+.form-group label span {
+  color: #555;
+  font-weight: 400;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color 0.15s;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #7c6ff7;
+}
+
+.form-group select option {
+  background: #111;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.modal-success {
+  text-align: center;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-success-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(124, 111, 247, 0.15);
+  border: 1px solid rgba(124, 111, 247, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #7c6ff7;
+  margin-bottom: 8px;
+}
+
+.modal-success h3 {
+  margin: 0;
+}
+
+.modal-success p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+  max-width: 340px;
+}
+
 @media (max-width: 600px) {
   .landing-nav { padding: 16px 20px; }
   .landing-hero { padding: 60px 20px 60px; }
   .landing-footer { flex-direction: column; align-items: flex-start; }
+  .pricing-cards { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .modal { padding: 28px 20px; }
 }
