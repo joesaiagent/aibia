@@ -54,7 +54,9 @@ function ProtectedApp() {
 
     const checkStatus = async (retries = 0) => {
       try {
-        const res = await client.get('/stripe/subscription/status')
+        const res = await client.get('/stripe/subscription/status', {
+          headers: { 'X-User-ID': user.id }
+        })
         const status = res.data.status
         if ((status === 'active' || status === 'trialing')) {
           setSubStatus('active')
