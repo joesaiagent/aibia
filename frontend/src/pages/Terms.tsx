@@ -157,7 +157,7 @@ export default function Terms() {
             <h2>17. Contact</h2>
             <p>If you have any questions about these Terms, please contact us at:</p>
             <p><strong>aibia</strong><br />
-            Email: <a href="mailto:joesaiagent@gmail.com">joesaiagent@gmail.com</a><br />
+            Email: <a href="mailto:info@aibia.io">info@aibia.io</a><br />
             Website: <a href="https://aibia.io">aibia.io</a></p>
           </section>
 

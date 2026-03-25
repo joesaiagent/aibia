@@ -142,7 +142,7 @@ export default function Privacy() {
               <li><strong>Objection:</strong> Object to certain processing of your information</li>
               <li><strong>Withdrawal of consent:</strong> Withdraw consent where processing is based on consent</li>
             </ul>
-            <p>To exercise any of these rights, contact us at <a href="mailto:joesaiagent@gmail.com">joesaiagent@gmail.com</a>. We will respond within 30 days.</p>
+            <p>To exercise any of these rights, contact us at <a href="mailto:info@aibia.io">info@aibia.io</a>. We will respond within 30 days.</p>
           </section>
 
           <section>
@@ -176,7 +176,7 @@ export default function Privacy() {
               <li>Opt out of the sale of your personal information (we do not sell personal information)</li>
               <li>Non-discrimination for exercising your privacy rights</li>
             </ul>
-            <p>To submit a request, contact us at <a href="mailto:joesaiagent@gmail.com">joesaiagent@gmail.com</a>.</p>
+            <p>To submit a request, contact us at <a href="mailto:info@aibia.io">info@aibia.io</a>.</p>
           </section>
 
           <section>
@@ -188,7 +188,7 @@ export default function Privacy() {
             <h2>15. Contact Us</h2>
             <p>If you have questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:</p>
             <p><strong>aibia</strong><br />
-            Email: <a href="mailto:joesaiagent@gmail.com">joesaiagent@gmail.com</a><br />
+            Email: <a href="mailto:info@aibia.io">info@aibia.io</a><br />
             Website: <a href="https://aibia.io">aibia.io</a></p>
           </section>
 

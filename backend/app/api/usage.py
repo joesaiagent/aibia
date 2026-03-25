@@ -13,7 +13,7 @@ MONTHLY_CAP = 30.0
 SUPPORT_MESSAGE = (
     "You've reached your monthly usage limit. "
     "Please contact Customer Service for immediate assistance: "
-    "call (732) 710-9918 or email joesaiagent@gmail.com"
+    "call (732) 710-9918 or email info@aibia.io"
 )
 
 
