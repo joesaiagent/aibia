@@ -126,20 +126,22 @@ SMTP_FROM_NAME=Your Name`}
         </div>
       </section>
 
-      {/* API Keys */}
+      {/* Self-hosted only */}
       <section className="settings-section">
-        <h2>🔑 API Keys</h2>
-        <p className="section-desc">Configure in <code>backend/.env</code>. Never commit this file.</p>
+        <h2>🔑 Self-Hosted Setup</h2>
+        <p className="section-desc">
+          Running aibia on your own server? You'll need these keys in <code>backend/.env</code>.
+          If you're on <strong>aibia.io</strong>, all of this is already configured for you — no action needed.
+        </p>
         <div className="api-key-list">
           {[
-            { key: 'ANTHROPIC_API_KEY', label: 'Anthropic (Claude) — powers all AI features. Billed to the aibia operator, not users.', required: true, url: 'https://console.anthropic.com/settings/keys' },
-            { key: 'TAVILY_API_KEY', label: 'Tavily (Web Search) — powers lead generation. First 1,000 searches free/month.', required: false, url: 'https://tavily.com' },
-            { key: 'FERNET_KEY', label: 'Fernet Key — auto-generated, encrypts stored OAuth tokens. Do not change.', required: true, url: null },
+            { key: 'ANTHROPIC_API_KEY', label: 'Anthropic (Claude) — powers all AI. Billed to the server operator.', url: 'https://console.anthropic.com/settings/keys' },
+            { key: 'TAVILY_API_KEY', label: 'Tavily (Web Search) — lead generation. First 1,000 searches free/month.', url: 'https://tavily.com' },
+            { key: 'FERNET_KEY', label: 'Fernet Key — run: python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"', url: null },
           ].map(item => (
             <div key={item.key} className="api-key-row">
               <code className="key-name">{item.key}</code>
               <span className="key-label">{item.label}</span>
-              {item.required && <span className="key-required">Required</span>}
               {item.url && <a href={item.url} target="_blank" rel="noreferrer" className="btn-ghost-sm">Get key →</a>}
             </div>
           ))}
