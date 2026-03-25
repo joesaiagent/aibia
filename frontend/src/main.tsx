@@ -54,6 +54,23 @@ function ProtectedApp() {
     const params = new URLSearchParams(window.location.search)
     const isCheckoutSuccess = params.get('checkout') === 'success'
 
+    // After sign-up from landing page "Get Started", auto-start checkout
+    if (params.get('checkout') === '1') {
+      window.history.replaceState({}, '', '/');
+      (async () => {
+        const token = await getToken()
+        const res = await fetch('/api/stripe/checkout', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (res.ok) {
+          const { url } = await res.json()
+          window.location.href = url
+        }
+      })()
+      return
+    }
+
     const checkStatus = async (retries = 0) => {
       try {
         const res = await client.get('/stripe/subscription/status')

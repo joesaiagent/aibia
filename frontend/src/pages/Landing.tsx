@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SignUpButton, SignInButton } from '@clerk/clerk-react'
+import { SignUpButton, SignInButton, useAuth, useClerk } from '@clerk/clerk-react'
 import './Landing.css'
 
 const FEATURES = [
@@ -73,11 +73,22 @@ export default function Landing() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const { isSignedIn, getToken } = useAuth()
+  const { openSignUp } = useClerk()
 
   const handleCheckout = async () => {
+    if (!isSignedIn) {
+      openSignUp({ afterSignUpUrl: '/?checkout=1' })
+      return
+    }
     setCheckoutLoading(true)
     try {
-      const res = await fetch('/api/stripe/checkout', { method: 'POST' })
+      const token = await getToken()
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) { setCheckoutLoading(false); return }
       const { url } = await res.json()
       window.location.href = url
     } catch {
