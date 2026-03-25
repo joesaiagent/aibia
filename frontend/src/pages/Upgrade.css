@@ -105,3 +105,17 @@
   font-size: 0.8rem;
   margin-top: 1rem;
 }
+
+.upgrade-signout {
+  background: none;
+  border: none;
+  color: #444;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  text-decoration: underline;
+}
+
+.upgrade-signout:hover {
+  color: #888;
+}

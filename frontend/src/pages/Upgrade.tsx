@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useClerk } from '@clerk/clerk-react'
 import client from '../api/client'
 import './Upgrade.css'
 
@@ -14,6 +15,7 @@ const FEATURES = [
 export default function Upgrade() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { signOut } = useClerk()
 
   const handleSubscribe = async () => {
     setLoading(true)
@@ -46,6 +48,7 @@ export default function Upgrade() {
         </button>
         {error && <p className="upgrade-error">{error}</p>}
         <p className="upgrade-note">Secure payment via Stripe. Cancel anytime.</p>
+        <button className="upgrade-signout" onClick={() => signOut()}>Sign out</button>
       </div>
     </div>
   )
