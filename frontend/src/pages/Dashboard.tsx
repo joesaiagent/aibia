@@ -4,10 +4,8 @@ import { getDashboardStats } from '../api'
 import './Dashboard.css'
 
 export default function Dashboard() {
-  const { data: stats, isLoading } = useQuery({ queryKey: ['dashboard-stats'], queryFn: getDashboardStats, refetchInterval: 15000 })
+  const { data: stats } = useQuery({ queryKey: ['dashboard-stats'], queryFn: getDashboardStats, refetchInterval: 15000 })
   const navigate = useNavigate()
-
-  if (isLoading) return <div className="page-loading">Loading...</div>
 
   return (
     <div className="page">
