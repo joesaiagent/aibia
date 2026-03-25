@@ -33,3 +33,7 @@
 .key-name { color: #7c6ff7; font-size: 12.5px; min-width: 180px; }
 .key-label { flex: 1; font-size: 13px; color: #888; }
 .key-required { font-size: 11px; color: #fb923c; background: rgba(251,146,60,0.1); padding: 2px 8px; border-radius: 20px; }
+
+.settings-legal-links { display: flex; gap: 1.5rem; margin-top: 0.75rem; }
+.settings-legal-links a { color: #555; font-size: 0.875rem; text-decoration: none; }
+.settings-legal-links a:hover { color: #aaa; }

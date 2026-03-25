@@ -145,6 +145,14 @@ SMTP_FROM_NAME=Your Name`}
           ))}
         </div>
       </section>
+
+      <section className="settings-section">
+        <h2>Legal</h2>
+        <div className="settings-legal-links">
+          <a href="/terms" target="_blank" rel="noreferrer">Terms of Service →</a>
+          <a href="/privacy" target="_blank" rel="noreferrer">Privacy Policy →</a>
+        </div>
+      </section>
     </div>
   )
 }
