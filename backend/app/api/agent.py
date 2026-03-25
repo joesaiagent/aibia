@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.agent.agent_loop import run_agent_loop
 from app.api.deps import get_user_id, require_subscription
+from app.api.rate_limit import agent_limit
 
 router = APIRouter()
 
@@ -15,7 +16,7 @@ class AgentRunRequest(BaseModel):
 
 
 @router.post("/run")
-async def agent_run(request: AgentRunRequest, db: Session = Depends(get_db), user_id: str = Depends(require_subscription)):
+async def agent_run(request: AgentRunRequest, db: Session = Depends(get_db), user_id: str = Depends(agent_limit)):
     async def event_stream():
         async for event in run_agent_loop(request.task, db, user_id):
             yield f"data: {json.dumps(event)}\n\n"
