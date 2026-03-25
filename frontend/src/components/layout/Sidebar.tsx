@@ -13,6 +13,7 @@ const nav = [
   { to: '/social', label: 'Social', icon: '📣' },
   { to: '/approvals', label: 'Approvals', icon: '✅' },
   { to: '/settings', label: 'Settings', icon: '⚙️' },
+  { to: '/account', label: 'Account', icon: '👤' },
 ]
 
 export default function Sidebar() {

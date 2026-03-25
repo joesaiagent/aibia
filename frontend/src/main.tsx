@@ -15,6 +15,7 @@ import Inbox from './pages/Inbox'
 import Social from './pages/Social'
 import Approvals from './pages/Approvals'
 import Settings from './pages/Settings'
+import Account from './pages/Account'
 import client, { setTokenGetter } from './api/client'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
       { path: 'social', element: <Social /> },
       { path: 'approvals', element: <Approvals /> },
       { path: 'settings', element: <Settings /> },
+      { path: 'account', element: <Account /> },
     ],
   },
 ])

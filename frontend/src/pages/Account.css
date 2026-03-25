@@ -1,0 +1,28 @@
+.account-profile {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.account-clerk-card {
+  background: #111 !important;
+  border: 1px solid #222 !important;
+  box-shadow: none !important;
+}
+
+.account-clerk-navbar {
+  background: #0d0d0d !important;
+  border-right: 1px solid #222 !important;
+}
+
+.account-clerk-nav-btn {
+  color: #aaa !important;
+}
+
+.account-clerk-nav-btn:hover {
+  background: #1a1a1a !important;
+  color: #fff !important;
+}
+
+.account-clerk-scroll {
+  background: #111 !important;
+}
