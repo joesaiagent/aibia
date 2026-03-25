@@ -7,6 +7,7 @@ from app.database import get_db
 from app.agent.agent_loop import run_agent_loop
 from app.api.deps import get_user_id, require_subscription
 from app.api.rate_limit import agent_limit
+from app.api.usage import check_usage_cap
 
 router = APIRouter()
 
@@ -17,6 +18,8 @@ class AgentRunRequest(BaseModel):
 
 @router.post("/run")
 async def agent_run(request: AgentRunRequest, db: Session = Depends(get_db), user_id: str = Depends(agent_limit)):
+    check_usage_cap(user_id, db)
+
     async def event_stream():
         async for event in run_agent_loop(request.task, db, user_id):
             yield f"data: {json.dumps(event)}\n\n"
