@@ -132,9 +132,9 @@ SMTP_FROM_NAME=Your Name`}
         <p className="section-desc">Configure in <code>backend/.env</code>. Never commit this file.</p>
         <div className="api-key-list">
           {[
-            { key: 'ANTHROPIC_API_KEY', label: 'Anthropic (Claude)', required: true, url: 'https://console.anthropic.com/settings/keys' },
-            { key: 'TAVILY_API_KEY', label: 'Tavily (Web Search)', required: true, url: 'https://tavily.com' },
-            { key: 'FERNET_KEY', label: 'Fernet Key — auto-generated, encrypts stored OAuth tokens', required: true, url: null },
+            { key: 'ANTHROPIC_API_KEY', label: 'Anthropic (Claude) — powers all AI features. Billed to the aibia operator, not users.', required: true, url: 'https://console.anthropic.com/settings/keys' },
+            { key: 'TAVILY_API_KEY', label: 'Tavily (Web Search) — powers lead generation. First 1,000 searches free/month.', required: false, url: 'https://tavily.com' },
+            { key: 'FERNET_KEY', label: 'Fernet Key — auto-generated, encrypts stored OAuth tokens. Do not change.', required: true, url: null },
           ].map(item => (
             <div key={item.key} className="api-key-row">
               <code className="key-name">{item.key}</code>
