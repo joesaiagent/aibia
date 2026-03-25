@@ -370,6 +370,11 @@
   color: #aaa;
 }
 
+.landing-footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
 /* Pricing */
 .landing-pricing {
   background: #0d0d0d;

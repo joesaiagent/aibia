@@ -16,6 +16,8 @@ import Social from './pages/Social'
 import Approvals from './pages/Approvals'
 import Settings from './pages/Settings'
 import Account from './pages/Account'
+import Terms from './pages/Terms'
+import Privacy from './pages/Privacy'
 import client, { setTokenGetter } from './api/client'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -91,6 +93,11 @@ function ProtectedApp() {
 
     checkStatus()
   }, [user, isLoaded]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Public pages — accessible without auth
+  const path = window.location.pathname
+  if (path === '/terms') return <Terms />
+  if (path === '/privacy') return <Privacy />
 
   if (!isLoaded || subStatus === 'loading') {
     return <div style={{ minHeight: '100vh', background: '#0a0a0a' }} />

@@ -250,7 +250,11 @@ export default function Landing() {
       <footer className="landing-footer">
         <span>✦ aibia</span>
         <span>Open source · Built for growing businesses</span>
-        <a href="https://github.com/joesaiagent/aibia" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <div className="landing-footer-links">
+          <a href="https://github.com/joesaiagent/aibia" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+        </div>
       </footer>
 
       {/* Contact Modal */}
