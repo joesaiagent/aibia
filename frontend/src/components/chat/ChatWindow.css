@@ -52,3 +52,13 @@
 .chat-input-box button:hover:not(:disabled) { background: #6a5ee0; transform: scale(1.05); }
 .chat-input-box button:disabled { background: #1a1a1a; color: #2e2e2e; cursor: not-allowed; transform: none; }
 .chat-hint { font-size: 11px; color: #222; text-align: center; margin-top: 8px; }
+
+@media (max-width: 767px) {
+  .chat-layout { height: calc(100vh - 60px); }
+  .chat-sidebar { display: none; }
+  .chat-messages { padding: 16px; gap: 14px; }
+  .chat-bubble { max-width: 88%; font-size: 14px; }
+  .chat-input-wrap { padding: 10px 12px 14px; }
+  .chat-welcome { padding: 24px 16px; }
+  .chat-suggestions { grid-template-columns: repeat(2, 1fr); max-width: 100%; }
+}

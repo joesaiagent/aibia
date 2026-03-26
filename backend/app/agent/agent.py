@@ -4,22 +4,29 @@ import anthropic
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from app.agent.prompts import SYSTEM_PROMPT
+from app.models.chat_conversation import ChatConversation
 
 load_dotenv()
 client = anthropic.Anthropic()
-conversations: dict[str, list] = {}
 
 
 async def stream_agent(message: str, conversation_id: str | None, user_id: str = "", db: Session = None) -> AsyncGenerator[dict, None]:
     if not conversation_id:
         conversation_id = str(uuid.uuid4())
 
-    # Scope conversation history by user to prevent cross-user access
-    scoped_key = f"{user_id}:{conversation_id}"
-    history = conversations.setdefault(scoped_key, [])
+    # Load or create conversation from DB
+    record = None
+    history = []
+    if db:
+        record = db.query(ChatConversation).filter(
+            ChatConversation.id == conversation_id,
+            ChatConversation.user_id == user_id,
+        ).first()
+        if record:
+            history = list(record.messages or [])
+
     history.append({"role": "user", "content": message})
 
-    # Yield conversation_id first so the frontend can track it
     yield {"type": "start", "conversation_id": conversation_id}
 
     full_reply = ""
@@ -35,6 +42,19 @@ async def stream_agent(message: str, conversation_id: str | None, user_id: str =
         usage = stream.get_final_message().usage
 
     history.append({"role": "assistant", "content": full_reply})
+
+    # Save conversation to DB
+    if db:
+        if record:
+            record.messages = history
+        else:
+            record = ChatConversation(
+                id=conversation_id,
+                user_id=user_id,
+                messages=history,
+            )
+            db.add(record)
+        db.commit()
 
     # Record token usage
     if db and user_id:
