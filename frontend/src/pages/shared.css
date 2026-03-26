@@ -219,3 +219,16 @@ label input, label select, label textarea {
   resize: vertical;
 }
 label input:focus, label textarea:focus { border-color: #7c6ff7; }
+
+@media (max-width: 767px) {
+  .page { padding: 16px; }
+  .page-header-row { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .filters { flex-wrap: wrap; }
+  .search-input { max-width: 100%; }
+  .form-grid { grid-template-columns: 1fr; }
+  .modal { padding: 20px; border-radius: 12px; }
+  .modal-actions { flex-direction: column-reverse; }
+  .modal-actions .btn-primary,
+  .modal-actions .btn-ghost { width: 100%; text-align: center; }
+  .tab-group { flex-wrap: wrap; }
+}

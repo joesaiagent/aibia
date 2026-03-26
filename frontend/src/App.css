@@ -12,3 +12,12 @@
   margin-left: 220px;
   height: 100vh;
 }
+
+@media (max-width: 767px) {
+  .app-main {
+    margin-left: 0;
+    height: 100vh;
+    /* leave room for the bottom nav (~60px) + safe area */
+    padding-bottom: calc(60px + env(safe-area-inset-bottom));
+  }
+}
