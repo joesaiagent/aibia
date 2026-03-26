@@ -17,7 +17,7 @@ class AgentRunRequest(BaseModel):
 
 
 @router.post("/run")
-async def agent_run(request: AgentRunRequest, db: Session = Depends(get_db), user_id: str = Depends(agent_limit)):
+async def agent_run(request: AgentRunRequest, db: Session = Depends(get_db), user_id: str = Depends(agent_limit), _sub=Depends(require_subscription)):
     check_usage_cap(user_id, db)
 
     async def event_stream():

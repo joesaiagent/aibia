@@ -4,6 +4,7 @@ from typing import AsyncGenerator
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from app.agent.tools import ALL_TOOLS, TOOL_HANDLERS
+from app.api.usage import record_usage
 
 load_dotenv()
 client = anthropic.Anthropic()
@@ -62,6 +63,7 @@ async def run_agent_loop(task: str, db: Session, user_id: str = "") -> AsyncGene
         # Stream text chunks via a queue
         text_queue: asyncio.Queue = asyncio.Queue()
         done_event = asyncio.Event()
+        final_usage = {"input_tokens": 0, "output_tokens": 0}
 
         def do_stream_with_queue():
             nonlocal text_so_far, tool_uses, stop_reason
@@ -79,6 +81,8 @@ async def run_agent_loop(task: str, db: Session, user_id: str = "") -> AsyncGene
 
                 final = stream.get_final_message()
                 stop_reason = final.stop_reason
+                final_usage["input_tokens"] = final.usage.input_tokens
+                final_usage["output_tokens"] = final.usage.output_tokens
                 for block in final.content:
                     if block.type == "tool_use":
                         tool_uses.append(block)
@@ -99,6 +103,9 @@ async def run_agent_loop(task: str, db: Session, user_id: str = "") -> AsyncGene
 
         await future
 
+        if user_id and db:
+            record_usage(user_id, final_usage["input_tokens"], final_usage["output_tokens"], db)
+
         if accumulated_text:
             yield {"type": "text", "content": accumulated_text}
 
@@ -112,7 +119,8 @@ async def run_agent_loop(task: str, db: Session, user_id: str = "") -> AsyncGene
                 messages.append({"role": "assistant", "content": assistant_content})
             break
 
-        # Process each tool call
+        # Process each tool call, capturing each result alongside its block
+        tool_results = []
         for block in tool_uses:
             assistant_content.append({
                 "type": "tool_use",
@@ -124,6 +132,7 @@ async def run_agent_loop(task: str, db: Session, user_id: str = "") -> AsyncGene
 
             handler = TOOL_HANDLERS.get(block.name)
             result = handler(block.input, db, user_id) if handler else {"error": f"Unknown tool: {block.name}"}
+            tool_results.append((block.id, result))
 
             yield {"type": "tool_result", "tool": block.name, "result": result}
 
@@ -140,10 +149,10 @@ async def run_agent_loop(task: str, db: Session, user_id: str = "") -> AsyncGene
             "content": [
                 {
                     "type": "tool_result",
-                    "tool_use_id": block.id,
-                    "content": str(result),
+                    "tool_use_id": tool_id,
+                    "content": str(tool_result),
                 }
-                for block in tool_uses
+                for tool_id, tool_result in tool_results
             ],
         })
 
