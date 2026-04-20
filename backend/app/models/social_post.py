@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from app.models.base import Base, TimestampMixin
 
 
@@ -15,3 +16,7 @@ class SocialPost(Base, TimestampMixin):
     external_post_id = Column(String)
     scheduled_for = Column(DateTime)
     posted_at = Column(DateTime)
+    campaign_id = Column(String, ForeignKey("campaigns.id"), nullable=True)
+    client_id = Column(String, ForeignKey("leads.id"), nullable=True)
+
+    campaign = relationship("Campaign", back_populates="posts")

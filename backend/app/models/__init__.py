@@ -1,5 +1,6 @@
 from app.models.base import Base
 from app.models.lead import Lead, LeadNote
+from app.models.campaign import Campaign
 from app.models.email_account import EmailAccount
 from app.models.email_message import EmailMessage
 from app.models.approval_item import ApprovalItem
@@ -9,7 +10,7 @@ from app.models.user_usage import UserUsage
 from app.models.chat_conversation import ChatConversation
 
 __all__ = [
-    "Base", "Lead", "LeadNote", "EmailAccount",
+    "Base", "Lead", "LeadNote", "Campaign", "EmailAccount",
     "EmailMessage", "ApprovalItem", "SocialPost", "UserSubscription", "UserUsage",
     "ChatConversation",
 ]

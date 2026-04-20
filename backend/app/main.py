@@ -6,6 +6,7 @@ from app.models import Base
 from app.api.routes import router as chat_router
 from app.api.agent import router as agent_router
 from app.api.leads import router as leads_router
+from app.api.campaigns import router as campaigns_router
 from app.api.approvals import router as approvals_router
 from app.api.social import router as social_router
 from app.api.email import router as email_router
@@ -32,6 +33,7 @@ app.add_middleware(
 app.include_router(chat_router, prefix="/api")
 app.include_router(agent_router, prefix="/api/agent")
 app.include_router(leads_router, prefix="/api/leads")
+app.include_router(campaigns_router, prefix="/api/campaigns")
 app.include_router(approvals_router, prefix="/api/approvals")
 app.include_router(social_router, prefix="/api/social")
 app.include_router(email_router, prefix="/api/email")

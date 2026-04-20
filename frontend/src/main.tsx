@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard'
 import Chat from './pages/Chat'
 import AgentRun from './pages/AgentRun'
 import Leads from './pages/Leads'
+import Campaigns from './pages/Campaigns'
 import Inbox from './pages/Inbox'
 import Social from './pages/Social'
 import Approvals from './pages/Approvals'
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       { path: 'chat', element: <Chat /> },
       { path: 'agent', element: <AgentRun /> },
       { path: 'leads', element: <Leads /> },
+      { path: 'campaigns', element: <Campaigns /> },
       { path: 'inbox', element: <Inbox /> },
       { path: 'social', element: <Social /> },
       { path: 'approvals', element: <Approvals /> },

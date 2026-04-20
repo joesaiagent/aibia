@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     # Frontend URL for OAuth redirects
     frontend_url: str = "http://localhost:5174"
 
+    # Owner user ID (Clerk) — used for contact form lead creation
+    owner_user_id: str = ""
+
     # Database
     database_url: str = "sqlite:///./aibia.db"
 

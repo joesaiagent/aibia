@@ -13,13 +13,16 @@ class Lead(Base, TimestampMixin):
     phone = Column(String)
     website = Column(String)
     linkedin_url = Column(String)
-    source = Column(String, default="manual")  # web_search | manual | email_import
-    status = Column(String, default="new")     # new | contacted | qualified | won | lost
+    source = Column(String, default="manual")      # manual | contact_form | referral
+    status = Column(String, default="new")         # new | contacted | meeting_booked | client | closed
+    service_interest = Column(String)              # AI service they want
+    business_type = Column(String)                 # type of business
     score = Column(Integer)
     notes = Column(String)
     last_contacted_at = Column(DateTime)
 
     lead_notes = relationship("LeadNote", back_populates="lead", cascade="all, delete-orphan")
+    campaigns = relationship("Campaign", back_populates="client")
 
 
 class LeadNote(Base, TimestampMixin):

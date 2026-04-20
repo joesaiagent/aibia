@@ -2,11 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import Optional
+from anthropic import Anthropic
 from app.database import get_db
 from app.models.lead import Lead, LeadNote
 from app.api.deps import get_user_id
+from app.config import settings
 
 router = APIRouter()
+_anthropic = Anthropic(api_key=settings.anthropic_api_key)
 
 
 class LeadCreate(BaseModel):
@@ -17,6 +20,9 @@ class LeadCreate(BaseModel):
     website: Optional[str] = None
     linkedin_url: Optional[str] = None
     source: Optional[str] = "manual"
+    status: Optional[str] = "new"
+    service_interest: Optional[str] = None
+    business_type: Optional[str] = None
     notes: Optional[str] = None
 
 
@@ -28,6 +34,8 @@ class LeadUpdate(BaseModel):
     website: Optional[str] = None
     linkedin_url: Optional[str] = None
     status: Optional[str] = None
+    service_interest: Optional[str] = None
+    business_type: Optional[str] = None
     score: Optional[int] = None
     notes: Optional[str] = None
 
@@ -47,6 +55,8 @@ def lead_to_dict(lead: Lead) -> dict:
         "linkedin_url": lead.linkedin_url,
         "source": lead.source,
         "status": lead.status,
+        "service_interest": lead.service_interest,
+        "business_type": lead.business_type,
         "score": lead.score,
         "notes": lead.notes,
         "created_at": str(lead.created_at),
@@ -87,7 +97,7 @@ def get_lead(lead_id: str, db: Session = Depends(get_db), user_id: str = Depends
     result = lead_to_dict(lead)
     result["lead_notes"] = [
         {"id": n.id, "content": n.content, "source": n.source, "created_at": str(n.created_at)}
-        for n in lead.lead_notes
+        for n in sorted(lead.lead_notes, key=lambda x: x.created_at, reverse=True)
     ]
     return result
 
@@ -123,4 +133,44 @@ def add_note(lead_id: str, data: NoteCreate, db: Session = Depends(get_db), user
     db.add(note)
     db.commit()
     db.refresh(note)
-    return {"id": note.id, "content": note.content, "source": note.source}
+    return {"id": note.id, "content": note.content, "source": note.source, "created_at": str(note.created_at)}
+
+
+@router.post("/{lead_id}/followup")
+def generate_followup(lead_id: str, db: Session = Depends(get_db), user_id: str = Depends(get_user_id)):
+    lead = db.query(Lead).filter(Lead.id == lead_id, Lead.user_id == user_id).first()
+    if not lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+
+    recent_notes = sorted(lead.lead_notes, key=lambda x: x.created_at, reverse=True)[:3]
+    notes_text = "\n".join(f"- {n.content}" for n in recent_notes) if recent_notes else "No notes yet."
+
+    stage_context = {
+        "new": "They just reached out. This is the first contact.",
+        "contacted": "We've reached out once. Following up to keep momentum.",
+        "meeting_booked": "A meeting is already booked. Confirm and set expectations.",
+        "client": "They are an active client. Check in on their progress.",
+        "closed": "The engagement is closed. Leave the door open for future work.",
+    }
+
+    prompt = f"""Write a short, warm follow-up email for a consultation lead. Sign it from Joseph at aibia.
+
+Lead info:
+- Name: {lead.name}
+- Business: {lead.company or "their business"}
+- Business Type: {lead.business_type or "local business"}
+- AI Service Interest: {lead.service_interest or "AI consulting / automation"}
+- Pipeline Stage: {lead.status} — {stage_context.get(lead.status, "")}
+- Notes: {notes_text}
+
+Write ONLY the email. Format:
+Subject: [subject line]
+
+[email body — 3-4 sentences max, personal and specific to their business]"""
+
+    message = _anthropic.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=400,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return {"email": message.content[0].text}

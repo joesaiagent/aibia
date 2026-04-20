@@ -7,7 +7,9 @@ export interface Lead {
   website?: string
   linkedin_url?: string
   source: string
-  status: 'new' | 'contacted' | 'qualified' | 'won' | 'lost'
+  status: 'new' | 'contacted' | 'meeting_booked' | 'client' | 'closed'
+  service_interest?: string
+  business_type?: string
   score?: number
   notes?: string
   created_at: string
@@ -19,6 +21,36 @@ export interface LeadNote {
   id: string
   content: string
   source: string
+  created_at: string
+}
+
+export interface Campaign {
+  id: string
+  name: string
+  client_id?: string
+  client_name?: string
+  client_company?: string
+  platforms: string[]
+  status: 'draft' | 'active' | 'paused' | 'completed'
+  campaign_brief?: string
+  start_date?: string
+  end_date?: string
+  budget?: string
+  notes?: string
+  post_count: number
+  created_at: string
+  updated_at: string
+  posts?: CampaignPost[]
+}
+
+export interface CampaignPost {
+  id: string
+  platform: string
+  content: string
+  hashtags: string[]
+  status: 'draft' | 'pending_approval' | 'approved' | 'posted' | 'failed'
+  campaign_id?: string
+  approval_item_id?: string
   created_at: string
 }
 
@@ -47,37 +79,26 @@ export interface SocialPost {
   created_at: string
 }
 
-export interface EmailAccount {
-  id: string
-  provider: 'gmail' | 'outlook'
-  email_address: string
-  display_name?: string
-  is_active: boolean
-  created_at: string
-}
-
-export interface EmailMessage {
-  id: string
-  subject: string
-  sender: string
-  received_at: string
-  is_read: boolean
-  account: string
-  error?: string
-}
-
 export interface DashboardStats {
-  leads: { total: number; new: number; contacted: number; qualified: number; won: number; lost: number }
-  approvals: { pending: number; total: number }
-  social: { drafts: number; pending_approval: number; posted: number }
-  email: { connected_accounts: number }
+  leads: {
+    total: number
+    pipeline: {
+      new: number
+      contacted: number
+      meeting_booked: number
+      client: number
+      closed: number
+    }
+  }
+  approvals: { pending: number }
+  campaigns: { active: number; total: number }
+  posts: { pending: number; published: number }
+  recent_leads: Array<{
+    id: string
+    name: string
+    company?: string
+    status: string
+    service_interest?: string
+    created_at: string
+  }>
 }
-
-export type AgentEvent =
-  | { type: 'text'; content: string }
-  | { type: 'text_delta'; content: string }
-  | { type: 'tool_start'; tool: string; input: Record<string, unknown> }
-  | { type: 'tool_result'; tool: string; result: unknown }
-  | { type: 'approval_created'; approval_id: string; title: string }
-  | { type: 'done' }
-  | { type: 'error'; message: string }
