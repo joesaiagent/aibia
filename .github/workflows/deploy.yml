@@ -1,0 +1,26 @@
+name: Deploy to aibia.io
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/aibia
+            git pull --rebase origin main
+            cd frontend && npm run build
+            cd ..
+            pkill -f uvicorn || true
+            sleep 1
+            cd backend && nohup .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+            sleep 2
+            echo "Deploy complete"
