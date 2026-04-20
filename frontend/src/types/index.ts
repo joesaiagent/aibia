@@ -67,6 +67,20 @@ export interface ApprovalItem {
   created_at: string
 }
 
+export interface EmailAccount {
+  id: string
+  email: string
+  provider: string
+  is_active: boolean
+  created_at: string
+}
+
+export interface AgentEvent {
+  type: string
+  content?: string
+  data?: unknown
+}
+
 export interface SocialPost {
   id: string
   platform: 'instagram' | 'twitter' | 'tiktok' | 'linkedin' | 'facebook'

@@ -32,3 +32,9 @@ export const rejectItem = (id: string, note?: string) => client.post(`/approvals
 export const getEmailAccounts = () => client.get('/email/accounts').then(r => r.data)
 export const initiateOAuth = (provider: string) => client.get('/email/oauth/initiate', { params: { provider } }).then(r => r.data)
 export const disconnectEmailAccount = (id: string) => client.delete(`/email/accounts/${id}`).then(r => r.data)
+
+// Legacy stubs (unused pages)
+export const getInbox = () => client.get('/inbox').then(r => r.data)
+export const getSocialPosts = () => client.get('/social/posts').then(r => r.data)
+export const createSocialPost = (data: unknown) => client.post('/social/posts', data).then(r => r.data)
+export const deleteSocialPost = (id: string) => client.delete(`/social/posts/${id}`).then(r => r.data)

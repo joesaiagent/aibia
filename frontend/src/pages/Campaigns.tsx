@@ -201,10 +201,6 @@ function LaunchModal({ onSave, onClose }: { onSave: (d: Partial<Campaign>) => Pr
   const [saving, setSaving] = useState(false)
   const set = (k: string, v: unknown) => setForm(f => ({ ...f, [k]: v }))
 
-  const { data: clients = [] } = useQuery({
-    queryKey: ['leads', '', 'client'],
-    queryFn: () => getLeads({ status: 'client' }),
-  })
   const { data: allLeads = [] } = useQuery({ queryKey: ['leads'], queryFn: () => getLeads() })
 
   const togglePlatform = (p: string) => {
