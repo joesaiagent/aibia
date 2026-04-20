@@ -20,7 +20,8 @@ jobs:
             cd frontend && npm run build
             cd ..
             pkill -f uvicorn || true
-            sleep 1
-            cd backend && nohup .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 &
             sleep 2
+            cd /var/www/aibia/backend
+            nohup .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 > /tmp/uvicorn.log 2>&1 &
+            disown
             echo "Deploy complete"
