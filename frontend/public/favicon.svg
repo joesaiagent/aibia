@@ -1,36 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <rect width="100" height="100" rx="22" fill="#0a0a0a"/>
 
-  <!-- Worm body: traces an "a" shape
-       - head at top right with antennae
-       - goes down the right stem
-       - curves around the bottom bowl
-       - up the left side
-       - over the top
-       - back to mid-right where bowl meets stem (closes the "a") -->
-  <path d="M 65,22
-           L 65,75
-           M 65,55
-           C 65,55 62,74 44,74
-           C 26,74 20,60 20,50
-           C 20,36 30,24 48,24
-           C 62,24 65,34 65,42"
-        fill="none"
-        stroke="#4ade80"
-        stroke-width="13"
-        stroke-linecap="round"
-        stroke-linejoin="round"/>
+  <!-- Bold "a" using text -->
+  <text x="50" y="82"
+        font-family="'Helvetica Neue', Arial, sans-serif"
+        font-weight="900"
+        font-size="84"
+        text-anchor="middle"
+        fill="#4ade80">a</text>
 
-  <!-- Worm head at top of stem -->
-  <circle cx="65" cy="18" r="8" fill="#4ade80"/>
-  <circle cx="61" cy="16" r="2" fill="#0a0a0a"/>
-  <circle cx="69" cy="16" r="2" fill="#0a0a0a"/>
-  <circle cx="62" cy="15" r="0.8" fill="#fff"/>
-  <circle cx="70" cy="15" r="0.8" fill="#fff"/>
+  <!-- Worm head at top of the stem (top-right of the "a") -->
+  <circle cx="74" cy="21" r="9" fill="#4ade80"/>
+  <circle cx="70" cy="18" r="2.2" fill="#0a0a0a"/>
+  <circle cx="78" cy="18" r="2.2" fill="#0a0a0a"/>
+  <circle cx="71" cy="17" r="0.9" fill="#fff"/>
+  <circle cx="79" cy="17" r="0.9" fill="#fff"/>
 
   <!-- Antennae -->
-  <line x1="61" y1="11" x2="56" y2="3" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
-  <line x1="69" y1="11" x2="74" y2="3" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="55" cy="2" r="2.5" fill="#4ade80"/>
-  <circle cx="75" cy="2" r="2.5" fill="#4ade80"/>
+  <line x1="70" y1="13" x2="64" y2="4" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+  <line x1="78" y1="13" x2="84" y2="4" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="63" cy="3" r="2.5" fill="#4ade80"/>
+  <circle cx="85" cy="3" r="2.5" fill="#4ade80"/>
 </svg>
