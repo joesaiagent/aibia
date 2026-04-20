@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ClerkProvider, SignedIn, SignedOut, useUser, useAuth } from '@clerk/clerk-react'
 import './index.css'
 import App from './App'
-import Landing from './pages/Landing'
+import Login from './pages/Login'
 import Upgrade from './pages/Upgrade'
 import Dashboard from './pages/Dashboard'
 import Chat from './pages/Chat'
@@ -96,6 +96,7 @@ function ProtectedApp() {
 
   // Public pages — accessible without auth
   const path = window.location.pathname
+  if (path.startsWith('/login')) return <Login />
   if (path === '/terms') return <Terms />
   if (path === '/privacy') return <Privacy />
 
@@ -112,7 +113,7 @@ function ProtectedApp() {
         }
       </SignedIn>
       <SignedOut>
-        <Landing />
+        <Login />
       </SignedOut>
     </>
   )
